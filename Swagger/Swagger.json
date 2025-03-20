@@ -1,0 +1,1565 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Admission",
+    "contact": {
+      "email": "mikhaylov61180@gmail.com"
+    }
+  },
+  "servers": [
+    {
+      "description": "SwaggerHub api Auto Mocking",
+      "url": "https://virtserver.swaggerhub.com/mikhaylovigor/Admission/1.0.0"
+    },
+    {
+      "url": "https://admission.swagger.io/api/v3"
+    }
+  ],
+  "tags": [
+    {
+      "name": "User",
+      "description": "Authorization and Profile"
+    },
+    {
+      "name": "Admission",
+      "description": "Manage Your Admission"
+    },
+    {
+      "name": "Document",
+      "description": "Manage Your Documents"
+    }
+  ],
+  "paths": {
+    "/api/User/Register": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Register New User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/User/Login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Login To The System",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginCredentialsDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/User/Logout": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Logout From The System",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/User/ResetPassword": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Reset Password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/User/Refresh": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Refresh Token",
+        "parameters": [
+          {
+            "name": "refreshToken",
+            "in": "cookie",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/User/Profile": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get Profile",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Edit Profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditUserDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/Admissions/My": {
+      "get": {
+        "tags": [
+          "Admission"
+        ],
+        "summary": "Get My Admissions",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShortAdmissionDTO"
+                  },
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/Admission": {
+      "post": {
+        "tags": [
+          "Admission"
+        ],
+        "summary": "Create Admission",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAdmissionDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "AdmissionId": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/Addmission/{Id}": {
+      "get": {
+        "tags": [
+          "Admission"
+        ],
+        "summary": "Get My Admission",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "Admission Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdmissionDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Admission"
+        ],
+        "summary": "Edit My Admission",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "Admission Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditAdmissionDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "AdmissionId": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Admission"
+        ],
+        "summary": "Delete My Admission",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "Admission Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/Document/{Id}/Scan": {
+      "post": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Upload File To Document",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "Document Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scan": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "scan"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "FileId": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/Document/Scan/{Id}": {
+      "get": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Download File",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "File Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Edit File",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "File Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scan": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "scan"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Delete File",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "File Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/Document/Passport": {
+      "post": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Create Passport (Can Be Only One)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePassportDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Get Passport",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassportDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Edit Passport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditPassportDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Delete Passport",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/Document/Education": {
+      "post": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Create Education Document (Can Be Only One)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEducationDocumentDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Get Education Document",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EducationDocumentDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Edit Education Document",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditEducationDocumentDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Document"
+        ],
+        "summary": "Delete Education Document",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden Access"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Gender": {
+        "type": "string",
+        "enum": [
+          "Male",
+          "Female"
+        ]
+      },
+      "CreateUserDTO": {
+        "required": [
+          "FullName",
+          "Email",
+          "Birthday",
+          "Gender",
+          "Citizenship",
+          "PhoneNumber",
+          "Password"
+        ],
+        "type": "object",
+        "properties": {
+          "FullName": {
+            "type": "string"
+          },
+          "Email": {
+            "type": "string",
+            "format": "email"
+          },
+          "Birthday": {
+            "type": "string",
+            "format": "date"
+          },
+          "Gender": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "Citizenship": {
+            "type": "string"
+          },
+          "PhoneNumber": {
+            "type": "string",
+            "format": "tel"
+          },
+          "Password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ModifiedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "FullName": {
+            "type": "string"
+          },
+          "Email": {
+            "type": "string",
+            "format": "email"
+          },
+          "Birthday": {
+            "type": "string",
+            "format": "date"
+          },
+          "Gender": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "Citizenship": {
+            "type": "string"
+          },
+          "PhoneNumber": {
+            "type": "string",
+            "format": "tel"
+          }
+        }
+      },
+      "EditUserDTO": {
+        "required": [
+          "FullName",
+          "Email",
+          "Birthday",
+          "Gender",
+          "Citizenship",
+          "PhoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "FullName": {
+            "type": "string"
+          },
+          "Email": {
+            "type": "string",
+            "format": "email"
+          },
+          "Birthday": {
+            "type": "string",
+            "format": "date"
+          },
+          "Gender": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "Citizenship": {
+            "type": "string"
+          },
+          "PhoneNumber": {
+            "type": "string",
+            "format": "tel"
+          }
+        }
+      },
+      "LoginCredentialsDTO": {
+        "required": [
+          "Email",
+          "Password"
+        ],
+        "type": "object",
+        "properties": {
+          "Email": {
+            "type": "string",
+            "format": "email"
+          },
+          "Password": {
+            "type": "string"
+          }
+        }
+      },
+      "ResetPasswordDTO": {
+        "required": [
+          "Email",
+          "OldPassword",
+          "NewPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "Email": {
+            "type": "string",
+            "format": "email"
+          },
+          "OldPassword": {
+            "type": "string"
+          },
+          "NewPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "ShortAdmissionDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ModifiedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Priority": {
+            "type": "integer"
+          },
+          "AdmissionStatus": {
+            "$ref": "#/components/schemas/AdmissionStatus"
+          }
+        }
+      },
+      "CreateAdmissionDTO": {
+        "required": [
+          "ProgramId",
+          "Priority"
+        ],
+        "type": "object",
+        "properties": {
+          "ProgramId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Priority": {
+            "type": "integer"
+          }
+        }
+      },
+      "AdmissionDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ModifiedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Priority": {
+            "type": "integer"
+          },
+          "AdmissionStatus": {
+            "$ref": "#/components/schemas/AdmissionStatus"
+          },
+          "Program": {
+            "$ref": "#/components/schemas/ProgramDTO"
+          }
+        }
+      },
+      "EditAdmissionDTO": {
+        "required": [
+          "ProgramId",
+          "Priority"
+        ],
+        "type": "object",
+        "properties": {
+          "ProgratmId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Priority": {
+            "type": "integer"
+          }
+        }
+      },
+      "AdmissionStatus": {
+        "type": "string",
+        "enum": [
+          "Created",
+          "Moderation",
+          "Confirmed",
+          "Rejected",
+          "Closed"
+        ]
+      },
+      "ProgramDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "Code": {
+            "type": "string",
+            "nullable": true
+          },
+          "Language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "EducationForm": {
+            "type": "string",
+            "minLength": 1
+          },
+          "Faculty": {
+            "$ref": "#/components/schemas/FacultyDTO"
+          },
+          "EducationLevel": {
+            "$ref": "#/components/schemas/EducationLevelDTO"
+          }
+        }
+      },
+      "FacultyDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Name": {
+            "type": "string"
+          }
+        }
+      },
+      "CreatePassportDTO": {
+        "required": [
+          "SeriesAndNumber",
+          "HomeTown",
+          "IssuedDate",
+          "WhoIssued"
+        ],
+        "type": "object",
+        "properties": {
+          "SeriesAndNumber": {
+            "type": "string"
+          },
+          "HomeTown": {
+            "type": "string"
+          },
+          "IssuedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "WhoIssued": {
+            "type": "string"
+          }
+        }
+      },
+      "PassportDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ModifiedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "SeriesAndNumber": {
+            "type": "string"
+          },
+          "HomeTown": {
+            "type": "string"
+          },
+          "IssuedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "WhoIssued": {
+            "type": "string"
+          },
+          "Files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileDTO"
+            }
+          }
+        }
+      },
+      "EditPassportDTO": {
+        "required": [
+          "SeriesAndNumber",
+          "HomeTown",
+          "IssuedDate",
+          "WhoIssued"
+        ],
+        "type": "object",
+        "properties": {
+          "SeriesAndNumber": {
+            "type": "string"
+          },
+          "HomeTown": {
+            "type": "string"
+          },
+          "IssuedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "WhoIssued": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateEducationDocumentDTO": {
+        "required": [
+          "Name",
+          "DocumentType"
+        ],
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "DocumentType": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "EducationDocumentDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ModifiedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "DocumentType": {
+            "$ref": "#/components/schemas/DocumentTypeDTO"
+          },
+          "Files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileDTO"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "EditEducationDocumentDTO": {
+        "required": [
+          "Name",
+          "DocumentType"
+        ],
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "DocumentType": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "DocumentTypeDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "EducationLevel": {
+            "$ref": "#/components/schemas/EducationLevelDTO"
+          },
+          "NextEducationLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EducationLevelDTO"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "EducationLevelDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "Name": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "FileDTO": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "CreatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ModifiedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Size": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "TokenResponseDTO": {
+        "type": "object",
+        "properties": {
+          "Access": {
+            "type": "string"
+          },
+          "Refresh": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Please enter token"
+      }
+    }
+  }
+}
