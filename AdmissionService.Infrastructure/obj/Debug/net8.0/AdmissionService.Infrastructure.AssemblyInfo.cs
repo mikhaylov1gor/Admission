@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AdmissionService.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d71fedc8e56a216319a3fbabb3eddaacc8d5d4b8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7b426e99d458b8f6883ea6080ddc81c2b55578c9")]
 [assembly: System.Reflection.AssemblyProductAttribute("AdmissionService.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AdmissionService.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

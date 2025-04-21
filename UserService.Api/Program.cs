@@ -2,6 +2,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using UserService.Api.Context.UserContext;
 using UserService.Application.Interfaces;
 using UserService.Application.Services.ApplicantService;
 using UserService.Application.Services.AuthService;
@@ -12,6 +14,7 @@ using UserService.Infrastructure.Repositories;
 using UserService.Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 var services = builder.Services;
 // Jwt configuration
@@ -32,6 +35,34 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter JWT token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
 // dbContext injection
 var connectionString = builder.Configuration.GetConnectionString("UserConnection");
 services.AddDbContext<UserDbContext>(options =>
@@ -48,9 +79,12 @@ services.AddScoped<IApplicantService, ApplicantService>();
 services.AddScoped<IAuthService, AuthService>();
 services.AddScoped<IPasswordHasherService, PasswordHasherService>();
 services.AddScoped<ITokenService, TokenService>();
-
+services.AddScoped<IUserContextService, UserContextService>();
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -66,5 +100,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
