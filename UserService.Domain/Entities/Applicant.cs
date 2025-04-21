@@ -11,5 +11,5 @@ public class Applicant
     public DateTime BirthDay { get; set; }
     public Gender Gender { get; set; }
     public string? Citizenship { get; set; }
-    public string? Phone { get; set; }
+    public string? PhoneNumber { get; set; }
 }
