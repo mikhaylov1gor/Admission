@@ -15,17 +15,20 @@ public class AuthService : IAuthService
     private readonly IApplicantRepository _applicantRepository;
     private readonly IManagerRepository _managerRepository;
     private readonly IPasswordHasherService _passwordHasherService;
+    private readonly ITokenService _tokenService;
 
     public AuthService(
         IUserRepository userRepository,
         IApplicantRepository applicantRepository,
         IManagerRepository managerRepository,
-        IPasswordHasherService passwordHasherService)
+        IPasswordHasherService passwordHasherService,
+        ITokenService tokenService)
     {
         _userRepository = userRepository;
         _applicantRepository = applicantRepository;
         _managerRepository = managerRepository;
         _passwordHasherService = passwordHasherService;
+        _tokenService = tokenService;
     }
 
     public async Task<GenericResult<TokenResponseDto>> RegisterApplicant(RegisterUserDto dto)
@@ -61,8 +64,7 @@ public class AuthService : IAuthService
         
         await _applicantRepository.AddAsync(newApplicant);
         
-        // vremennaya zaglushka
-        var tokens = new TokenResponseDto() {AccessToken = "123", RefreshToken = "456"};
+        var tokens = await _tokenService.GenerateTokens(newUser);
 
         return GenericResult<TokenResponseDto>.Success(tokens);
     }
@@ -81,16 +83,14 @@ public class AuthService : IAuthService
             throw new ValidationException("Invalid password.");
         }
         
-        // vremennaya zaglushka
-        var tokens = new TokenResponseDto() {AccessToken = "123", RefreshToken = "456"};
+        var tokens = await _tokenService.GenerateTokens(user);
 
         return GenericResult<TokenResponseDto>.Success(tokens);
     }
 
-    public async Task<GenericResult<TokenResponseDto>> RefreshTokens()
+    public async Task<GenericResult<TokenResponseDto>> RefreshTokens(string refreshToken)
     {
-        // vremennaya zaglushka
-        var tokens = new TokenResponseDto() {AccessToken = "123", RefreshToken = "456"};
+        var tokens = await _tokenService.RefreshToken(refreshToken);
 
         return GenericResult<TokenResponseDto>.Success(tokens);
     }

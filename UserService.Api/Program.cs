@@ -17,7 +17,6 @@ var services = builder.Services;
 // Jwt configuration
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 services.Configure<JwtSettings>(jwtSettings);
-services.AddSingleton<ITokenService, TokenService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -48,7 +47,10 @@ services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 services.AddScoped<IApplicantService, ApplicantService>();
 services.AddScoped<IAuthService, AuthService>();
 services.AddScoped<IPasswordHasherService, PasswordHasherService>();
+services.AddScoped<ITokenService, TokenService>();
 
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

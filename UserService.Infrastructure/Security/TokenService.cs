@@ -26,12 +26,16 @@ public class TokenService : ITokenService
         _userDbContext = userDbContext;
     }
 
-    public TokenResponseDto GenerateTokens(User user)
+    public async Task<TokenResponseDto> GenerateTokens(User user)
     {
-        var tokens = new TokenResponseDto();
-        
-        tokens.AccessToken = GenerateAccessToken(user);
-        tokens.RefreshToken = GenerateRefreshToken(user);
+        var accessToken = GenerateAccessToken(user);
+        var refreshToken = await GenerateRefreshToken(user);
+
+        var tokens = new TokenResponseDto
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+        };
         
         return tokens;
     }
@@ -85,7 +89,7 @@ public class TokenService : ITokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private string GenerateRefreshToken(User user)
+    private async Task<string> GenerateRefreshToken(User user)
     {
         var randomNumber = new byte[32];
         using (var rng = RandomNumberGenerator.Create())
@@ -104,8 +108,8 @@ public class TokenService : ITokenService
             IsRevoked = false
         };
         
-        _userDbContext.RefreshTokens.Add(refreshTokenEntity);
-        _userDbContext.SaveChanges();
+        await _userDbContext.RefreshTokens.AddAsync(refreshTokenEntity);
+        await _userDbContext.SaveChangesAsync();
         
         return refreshToken;
     }
