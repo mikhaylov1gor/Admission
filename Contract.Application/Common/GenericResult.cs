@@ -22,4 +22,3 @@ public class GenericResult<T>
 
     public static GenericResult<T> Failure(string error) => new GenericResult<T>(error);
 }
-}
