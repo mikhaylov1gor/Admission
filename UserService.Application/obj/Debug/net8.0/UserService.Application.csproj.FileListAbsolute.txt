@@ -17,3 +17,4 @@ C:\Users\mikha\RiderProjects\Admission\UserService.Application\obj\Debug\net8.0\
 C:\Users\mikha\RiderProjects\Admission\UserService.Application\obj\Debug\net8.0\refint\UserService.Application.dll
 C:\Users\mikha\RiderProjects\Admission\UserService.Application\obj\Debug\net8.0\UserService.Application.pdb
 C:\Users\mikha\RiderProjects\Admission\UserService.Application\obj\Debug\net8.0\ref\UserService.Application.dll
+C:\Users\mikha\RiderProjects\Admission\UserService.Application\obj\Debug\net8.0\UserService.Application.sourcelink.json

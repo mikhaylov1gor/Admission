@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using UserService.Api.Context.UserContext;
+using UserService.Api.Middleware;
 using UserService.Application.Interfaces;
 using UserService.Application.Services.ApplicantService;
 using UserService.Application.Services.AuthService;
@@ -89,6 +90,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// injections of middlewarries
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

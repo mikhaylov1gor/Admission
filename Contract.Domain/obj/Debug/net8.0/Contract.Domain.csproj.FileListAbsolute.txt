@@ -9,3 +9,4 @@ C:\Users\mikha\RiderProjects\Admission\Contract.Domain\obj\Debug\net8.0\Contract
 C:\Users\mikha\RiderProjects\Admission\Contract.Domain\obj\Debug\net8.0\refint\Contract.Domain.dll
 C:\Users\mikha\RiderProjects\Admission\Contract.Domain\obj\Debug\net8.0\Contract.Domain.pdb
 C:\Users\mikha\RiderProjects\Admission\Contract.Domain\obj\Debug\net8.0\ref\Contract.Domain.dll
+C:\Users\mikha\RiderProjects\Admission\Contract.Domain\obj\Debug\net8.0\Contract.Domain.sourcelink.json

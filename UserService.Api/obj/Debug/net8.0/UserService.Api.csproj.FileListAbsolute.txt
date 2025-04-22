@@ -152,3 +152,4 @@ C:\Users\mikha\RiderProjects\Admission\UserService.Api\bin\Debug\net8.0\tr\Micro
 C:\Users\mikha\RiderProjects\Admission\UserService.Api\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\mikha\RiderProjects\Admission\UserService.Api\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\mikha\RiderProjects\Admission\UserService.Api\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
+C:\Users\mikha\RiderProjects\Admission\UserService.Api\obj\Debug\net8.0\UserService.Api.sourcelink.json

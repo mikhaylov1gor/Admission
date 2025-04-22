@@ -13,20 +13,20 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IApplicantRepository _applicantRepository;
-    private readonly IManagerRepository _managerRepository;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IPasswordHasherService _passwordHasherService;
     private readonly ITokenService _tokenService;
 
     public AuthService(
         IUserRepository userRepository,
         IApplicantRepository applicantRepository,
-        IManagerRepository managerRepository,
+        IRefreshTokenRepository refreshTokenRepository,
         IPasswordHasherService passwordHasherService,
         ITokenService tokenService)
     {
         _userRepository = userRepository;
         _applicantRepository = applicantRepository;
-        _managerRepository = managerRepository;
+        _refreshTokenRepository = refreshTokenRepository;
         _passwordHasherService = passwordHasherService;
         _tokenService = tokenService;
     }
@@ -95,9 +95,24 @@ public class AuthService : IAuthService
         return GenericResult<TokenResponseDto>.Success(tokens);
     }
 
-    public async Task<Result> Logout()
+    public async Task<Result> Logout(Guid userId)
     {
-        // vremennaya zaglushka
+        var applicantDb = await _applicantRepository.GetByUserIdAsync(userId);
+
+        if (applicantDb == null)
+        {
+            throw new NotFoundException("Applicant not found.");
+        }
+        
+        var refreshTokens = await _refreshTokenRepository.GetAllByUserIdAsync(userId);
+
+        if (refreshTokens.Count == 0)
+        {
+            throw new NotFoundException("Refresh tokens not found.");
+        }
+        
+        await _tokenService.DeleteTokens(refreshTokens);
+
         return Result.Success();
     }
 }

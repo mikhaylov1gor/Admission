@@ -7,4 +7,5 @@ public interface ITokenService
 {
     Task<TokenResponseDto> GenerateTokens(User user);
     Task<TokenResponseDto> RefreshToken(string refreshToken);
+    Task DeleteTokens(List<RefreshToken> refreshTokens);
 }

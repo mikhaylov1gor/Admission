@@ -28,35 +28,24 @@ public class ApplicantController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserDto dto)
     {
-        var result = await _authService.RegisterApplicant(dto);
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-        return BadRequest(result.Error);
+        var response = await _authService.RegisterApplicant(dto);
+        return Ok(response.Value);
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginCredentialsDto dto)
     {
-        var result = await _authService.Login(dto);
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-        return BadRequest(result.Error);
+        var response = await _authService.Login(dto);
+        return Ok(response.Value);
     }
 
     [HttpPost("logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
     {
-        var result = await _authService.Logout();
-        if (result.IsSuccess)
-        {
-            return Ok();
-        }
-        return BadRequest(result.Error);
+        var userId = _userContextService.GetCurrentUserId(); 
+        await _authService.Logout(userId);
+        return Ok();
     }
 
     [HttpPut("resetPassword")]
@@ -64,24 +53,16 @@ public class ApplicantController : ControllerBase
     public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
     {
         var userId = _userContextService.GetCurrentUserId(); 
-        var result = await _applicantService.ResetPassword(dto, userId);
-        if (result.IsSuccess)
-        {
-            return Ok();
-        }
-        return BadRequest(result.Error);
+        await _applicantService.ResetPassword(dto, userId);
+        return Ok();
     }
 
     [HttpPost("refreshToken")]
     [Authorize]
     public async Task<IActionResult> RefreshToken(string token)
     {
-        var result = await _authService.RefreshTokens(token);
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-        return BadRequest(result.Error);
+        var response = await _authService.RefreshTokens(token);
+        return Ok(response.Value);
     }
 
     [HttpGet("profile")]
@@ -89,12 +70,8 @@ public class ApplicantController : ControllerBase
     public async Task<IActionResult> GetProfile()
     {
         var userId = _userContextService.GetCurrentUserId(); 
-        var result = await _applicantService.GetProfile(userId);
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-        return BadRequest(result.Error);
+        var response = await _applicantService.GetProfile(userId);
+        return Ok(response.Value);
     }
 
     [HttpPut("profile")]
@@ -102,11 +79,7 @@ public class ApplicantController : ControllerBase
     public async Task<IActionResult> EditProfile(EditUserDto dto)
     {
         var userId = _userContextService.GetCurrentUserId(); 
-        var result = await _applicantService.EditProfile(dto, userId);
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-        return BadRequest(result.Error);
+        await _applicantService.EditProfile(dto, userId);
+        return Ok();
     }
 }

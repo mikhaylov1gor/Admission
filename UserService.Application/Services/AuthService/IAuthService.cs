@@ -9,5 +9,6 @@ public interface IAuthService
     Task<GenericResult<TokenResponseDto>> RegisterApplicant(RegisterUserDto dto);
     Task<GenericResult<TokenResponseDto>> Login(LoginCredentialsDto dto);
     Task<GenericResult<TokenResponseDto>> RefreshTokens(string refreshToken);
-    Task<Result> Logout();
+    Task<Result> Logout(Guid userId);
+
 }

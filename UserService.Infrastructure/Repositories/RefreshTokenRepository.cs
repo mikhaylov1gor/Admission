@@ -19,6 +19,13 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         return await _context.RefreshTokens
             .FirstOrDefaultAsync(u => u.UserId == userId);
     }
+
+    public async Task<List<RefreshToken>> GetAllByUserIdAsync(Guid userId)
+    {
+        return await _context.RefreshTokens
+            .Where(rt => rt.UserId == userId)
+            .ToListAsync();
+    }
     
     public async Task AddAsync(RefreshToken token)
     {
@@ -27,6 +34,12 @@ public class RefreshTokenRepository : IRefreshTokenRepository
 
     public async Task SaveChangesAsync()
     {
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(RefreshToken token)
+    {
+        _context.RefreshTokens.Remove(token);
         await _context.SaveChangesAsync();
     }
 }

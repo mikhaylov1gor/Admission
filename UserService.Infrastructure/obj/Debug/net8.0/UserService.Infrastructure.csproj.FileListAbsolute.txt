@@ -21,3 +21,4 @@ C:\Users\mikha\RiderProjects\Admission\UserService.Infrastructure\obj\Debug\net8
 C:\Users\mikha\RiderProjects\Admission\UserService.Infrastructure\obj\Debug\net8.0\UserService.Infrastructure.pdb
 C:\Users\mikha\RiderProjects\Admission\UserService.Infrastructure\obj\Debug\net8.0\UserService.Infrastructure.genruntimeconfig.cache
 C:\Users\mikha\RiderProjects\Admission\UserService.Infrastructure\obj\Debug\net8.0\ref\UserService.Infrastructure.dll
+C:\Users\mikha\RiderProjects\Admission\UserService.Infrastructure\obj\Debug\net8.0\UserService.Infrastructure.sourcelink.json

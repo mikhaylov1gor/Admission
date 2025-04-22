@@ -43,7 +43,7 @@ public class TokenService : ITokenService
     public async Task<TokenResponseDto> RefreshToken(string refreshToken)
     {
         var storedRefreshToken = await _userDbContext.RefreshTokens
-            .FirstOrDefaultAsync(rt => rt.Token == refreshToken && !rt.IsRevoked);
+            .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
         
         if (storedRefreshToken == null || storedRefreshToken.ExpiresAt < DateTime.UtcNow)
         {
@@ -65,6 +65,13 @@ public class TokenService : ITokenService
         };
         
         return tokenResponse;
+    }
+
+    public async Task DeleteTokens(List<RefreshToken> refreshTokens)
+    {
+        
+        _userDbContext.RefreshTokens.RemoveRange(refreshTokens);
+        await _userDbContext.SaveChangesAsync();
     }
 
     private string GenerateAccessToken(User user)
