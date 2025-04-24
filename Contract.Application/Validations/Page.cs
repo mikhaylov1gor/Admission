@@ -16,5 +16,7 @@ public class Page : ValidationAttribute
             else
                 return new ValidationResult("Page can not be less than 1.");
         }
+        
+        return new ValidationResult("Value type is not supported.");
     }
 }

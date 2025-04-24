@@ -16,5 +16,7 @@ public class Size : ValidationAttribute
             else
                 return new ValidationResult("Page size can not be less than 1.");
         }
+        
+        return new ValidationResult("Value type is not supported.");
     }
 }
