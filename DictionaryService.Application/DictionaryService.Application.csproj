@@ -7,11 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Contract.Application\Contract.Application.csproj" />
       <ProjectReference Include="..\DictionaryService.Domain\DictionaryService.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Dtos\Requests\" />
     </ItemGroup>
 
 </Project>

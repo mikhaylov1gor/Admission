@@ -108,10 +108,21 @@
           "Microsoft.AspNetCore.App"
         ]
       },
+      "Contract.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Contract.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Contract.Application.dll": {}
+        }
+      },
       "DictionaryService.Application/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
+          "Contract.Application": "1.0.0",
           "DictionaryService.Domain": "1.0.0"
         },
         "compile": {
@@ -474,6 +485,11 @@
         "swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512",
         "swashbuckle.aspnetcore.swaggerui.nuspec"
       ]
+    },
+    "Contract.Application/1.0.0": {
+      "type": "project",
+      "path": "../Contract.Application/Contract.Application.csproj",
+      "msbuildProject": "../Contract.Application/Contract.Application.csproj"
     },
     "DictionaryService.Application/1.0.0": {
       "type": "project",

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DictionaryService.Application.Dtos.Requests;
+using DictionaryService.Application.Services.DictionaryService;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DictionaryService.Api.Controllers;
 
@@ -6,32 +8,37 @@ namespace DictionaryService.Api.Controllers;
 [ApiController]
 public class DictionaryController : ControllerBase
 {
-    public DictionaryController()
+    private readonly IDictionaryService _dictionaryService;
+    public DictionaryController(IDictionaryService dictionaryService)
     {
-        
+        _dictionaryService = dictionaryService;
     }
 
     [HttpGet("educationLevels")]
     public async Task<IActionResult> GetEducationLevels()
     {
-        return Ok();
+        var response = await _dictionaryService.GetEducationLevels();
+        return Ok(response.Value);
     }
 
     [HttpGet("documentTypes")]
     public async Task<IActionResult> GetDocumentTypes()
     {
-        return Ok();
+        var response = await _dictionaryService.GetDocumentTypes();
+        return Ok(response.Value);
     }
 
     [HttpGet("faculties")]
     public async Task<IActionResult> GetFaculties()
     {
-        return Ok();
+        var response = await _dictionaryService.GetFaculties();
+        return Ok(response.Value);
     }
 
     [HttpGet("programs")]
-    public async Task<IActionResult> GetPrograms()
+    public async Task<IActionResult> GetPrograms([FromQuery] FilterParametersDto parameters)
     {
-        return Ok();
+        var response = await _dictionaryService.GetPrograms(parameters);
+        return Ok(response.Value);
     }
 }

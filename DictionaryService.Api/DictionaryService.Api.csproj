@@ -15,8 +15,4 @@
       <ProjectReference Include="..\DictionaryService.Application\DictionaryService.Application.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Middleware\" />
-    </ItemGroup>
-
 </Project>

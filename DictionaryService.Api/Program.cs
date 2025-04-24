@@ -1,3 +1,5 @@
+using DictionaryService.Api.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
@@ -19,6 +21,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // injections of middlewarries
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
