@@ -58,7 +58,6 @@ public class ApplicantController : ControllerBase
     }
 
     [HttpPost("refreshToken")]
-    [Authorize]
     public async Task<IActionResult> RefreshToken(string token)
     {
         var response = await _authService.RefreshTokens(token);
