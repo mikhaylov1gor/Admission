@@ -3,7 +3,7 @@
 public class EducationProgram
 {
     public Guid Id { get; private set; }
-    public required DateTime createTime { get; set; }
+    public required DateTime CreateTime { get; set; }
     public required string Name { get; set; }
     public string? Code {get; set;}
     public required string Language { get; set; }
