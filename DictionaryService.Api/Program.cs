@@ -1,15 +1,27 @@
 using DictionaryService.Api.Middleware;
+using DictionaryService.Application.Services.DictionaryService;
+using DictionaryService.Domain.IRepositories;
+using DictionaryService.Infrastructure.Persistence;
+using DictionaryService.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
-// Jwt configuration
 
 // dbContext injection
+var connectionString = builder.Configuration.GetConnectionString("DictionaryConnection");
+services.AddDbContext<DictionaryDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // injections of repositories
+services.AddScoped<IDocumentTypeRepository, DocumentTypeRepository>();
+services.AddScoped<IEducationLevelRepository, EducationLevelRepository>();
+services.AddScoped<IEducationProgramRepository, EducationProgramRepository>();
+services.AddScoped<IFacultyRepository, FacultyRepository>();
 
 // injections of services
+services.AddScoped<IDictionaryService, DictionaryService.Application.Services.DictionaryService.DictionaryService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
