@@ -7,11 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Dtos\" />
-      <Folder Include="Services\" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <ProjectReference Include="..\Contract.Application\Contract.Application.csproj" />
       <ProjectReference Include="..\DocumentService.Domain\DocumentService.Domain.csproj" />
     </ItemGroup>
 
