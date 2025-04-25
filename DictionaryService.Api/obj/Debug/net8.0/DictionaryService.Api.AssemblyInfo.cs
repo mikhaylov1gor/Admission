@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DictionaryService.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b009b663de527089b6e624f43e882166e42de8ce")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0040d19846208e8848fa7cccdb867e105931fbe")]
 [assembly: System.Reflection.AssemblyProductAttribute("DictionaryService.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DictionaryService.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
