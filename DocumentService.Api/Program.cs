@@ -1,3 +1,4 @@
+using DocumentService.Api.Middleware;
 using DocumentService.Application.Services.DocumentService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // injections of middlewarries
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

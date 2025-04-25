@@ -12,12 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-      <Folder Include="Middleware\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\AdmissionService.Application\AdmissionService.Application.csproj" />
+      <ProjectReference Include="..\Contract.Application\Contract.Application.csproj" />
     </ItemGroup>
 
 </Project>
