@@ -1,3 +1,5 @@
+
+
 # Rider & IDEA
 .idea/
 *.suo
@@ -6,6 +8,8 @@
 *.iml
 
 # Build results
+**/[Oo]bj/
+**/[Bb]in/
 [Bb]in/
 [Oo]bj/
 out/
