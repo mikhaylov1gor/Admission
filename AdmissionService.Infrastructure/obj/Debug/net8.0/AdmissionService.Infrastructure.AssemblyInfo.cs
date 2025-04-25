@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AdmissionService.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd511c2f1b04bd0094f5e2e204dbbd7cf0bde59c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0040d19846208e8848fa7cccdb867e105931fbe")]
 [assembly: System.Reflection.AssemblyProductAttribute("AdmissionService.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AdmissionService.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
