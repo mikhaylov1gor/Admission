@@ -1,11 +1,49 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {
+      "DocumentService.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "DocumentService.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/DocumentService.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DocumentService.Application.dll": {}
+        }
+      },
+      "DocumentService.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/DocumentService.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DocumentService.Domain.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "DocumentService.Application/1.0.0": {
+      "type": "project",
+      "path": "../DocumentService.Application/DocumentService.Application.csproj",
+      "msbuildProject": "../DocumentService.Application/DocumentService.Application.csproj"
+    },
+    "DocumentService.Domain/1.0.0": {
+      "type": "project",
+      "path": "../DocumentService.Domain/DocumentService.Domain.csproj",
+      "msbuildProject": "../DocumentService.Domain/DocumentService.Domain.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0": []
+    "net8.0": [
+      "DocumentService.Application >= 1.0.0",
+      "DocumentService.Domain >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\mikha\\.nuget\\packages\\": {}
@@ -34,7 +72,14 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\mikha\\RiderProjects\\Admission\\DocumentService.Application\\DocumentService.Application.csproj": {
+              "projectPath": "C:\\Users\\mikha\\RiderProjects\\Admission\\DocumentService.Application\\DocumentService.Application.csproj"
+            },
+            "C:\\Users\\mikha\\RiderProjects\\Admission\\DocumentService.Domain\\DocumentService.Domain.csproj": {
+              "projectPath": "C:\\Users\\mikha\\RiderProjects\\Admission\\DocumentService.Domain\\DocumentService.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

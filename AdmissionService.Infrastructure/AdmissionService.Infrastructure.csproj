@@ -6,4 +6,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Persistence\" />
+      <Folder Include="Repositories\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AdmissionService.Application\AdmissionService.Application.csproj" />
+      <ProjectReference Include="..\AdmissionService.Domain\AdmissionService.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

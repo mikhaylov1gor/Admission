@@ -6,4 +6,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Persistence\" />
+      <Folder Include="Repositories\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DocumentService.Application\DocumentService.Application.csproj" />
+      <ProjectReference Include="..\DocumentService.Domain\DocumentService.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

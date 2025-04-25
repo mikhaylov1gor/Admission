@@ -1,11 +1,49 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {
+      "AdmissionService.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "AdmissionService.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/AdmissionService.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/AdmissionService.Application.dll": {}
+        }
+      },
+      "AdmissionService.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/AdmissionService.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/AdmissionService.Domain.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "AdmissionService.Application/1.0.0": {
+      "type": "project",
+      "path": "../AdmissionService.Application/AdmissionService.Application.csproj",
+      "msbuildProject": "../AdmissionService.Application/AdmissionService.Application.csproj"
+    },
+    "AdmissionService.Domain/1.0.0": {
+      "type": "project",
+      "path": "../AdmissionService.Domain/AdmissionService.Domain.csproj",
+      "msbuildProject": "../AdmissionService.Domain/AdmissionService.Domain.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0": []
+    "net8.0": [
+      "AdmissionService.Application >= 1.0.0",
+      "AdmissionService.Domain >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\mikha\\.nuget\\packages\\": {}
@@ -34,7 +72,14 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\mikha\\RiderProjects\\Admission\\AdmissionService.Application\\AdmissionService.Application.csproj": {
+              "projectPath": "C:\\Users\\mikha\\RiderProjects\\Admission\\AdmissionService.Application\\AdmissionService.Application.csproj"
+            },
+            "C:\\Users\\mikha\\RiderProjects\\Admission\\AdmissionService.Domain\\AdmissionService.Domain.csproj": {
+              "projectPath": "C:\\Users\\mikha\\RiderProjects\\Admission\\AdmissionService.Domain\\AdmissionService.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

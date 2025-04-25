@@ -107,6 +107,29 @@
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
         ]
+      },
+      "AdmissionService.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "AdmissionService.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/AdmissionService.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/AdmissionService.Application.dll": {}
+        }
+      },
+      "AdmissionService.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/AdmissionService.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/AdmissionService.Domain.dll": {}
+        }
       }
     }
   },
@@ -451,10 +474,21 @@
         "swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512",
         "swashbuckle.aspnetcore.swaggerui.nuspec"
       ]
+    },
+    "AdmissionService.Application/1.0.0": {
+      "type": "project",
+      "path": "../AdmissionService.Application/AdmissionService.Application.csproj",
+      "msbuildProject": "../AdmissionService.Application/AdmissionService.Application.csproj"
+    },
+    "AdmissionService.Domain/1.0.0": {
+      "type": "project",
+      "path": "../AdmissionService.Domain/AdmissionService.Domain.csproj",
+      "msbuildProject": "../AdmissionService.Domain/AdmissionService.Domain.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "AdmissionService.Application >= 1.0.0",
       "Microsoft.AspNetCore.OpenApi >= 8.0.2",
       "Swashbuckle.AspNetCore >= 6.4.0"
     ]
@@ -486,7 +520,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\mikha\\RiderProjects\\Admission\\AdmissionService.Application\\AdmissionService.Application.csproj": {
+              "projectPath": "C:\\Users\\mikha\\RiderProjects\\Admission\\AdmissionService.Application\\AdmissionService.Application.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -535,5 +573,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Error occurred while getting package vulnerability data: Unable to load the service index for source https://api.nuget.org/v3/index.json."
+    }
+  ]
 }

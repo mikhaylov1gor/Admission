@@ -1,5 +1,6 @@
 using DictionaryService.Api.Middleware;
 using DictionaryService.Application.Services.DictionaryService;
+using DictionaryService.Application.Services.UpdateDictionaryService;
 using DictionaryService.Domain.IRepositories;
 using DictionaryService.Infrastructure.Persistence;
 using DictionaryService.Infrastructure.Repositories;
@@ -22,6 +23,7 @@ services.AddScoped<IFacultyRepository, FacultyRepository>();
 
 // injections of services
 services.AddScoped<IDictionaryService, DictionaryService.Application.Services.DictionaryService.DictionaryService>();
+services.AddScoped<IUpdateDictionaryService, UpdateDictionaryService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
