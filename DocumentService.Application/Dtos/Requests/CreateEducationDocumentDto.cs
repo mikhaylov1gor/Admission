@@ -9,5 +9,5 @@ public class CreateEducationDocumentDto
     public required string Name { get; set; }
     
     [Required]
-    public required Guid DocumentTypeId { get; set; }
+    public required Guid EducationDocumentTypeId { get; set; }
 }

@@ -7,11 +7,11 @@ public class EditPassportDto
 {
     [Required]
     [Range(1000, 9999)]
-    public required string Serial { get; set; }
+    public required int Serial { get; set; }
     
     [Required]
     [Range(100000, 999999)]
-    public required string Number { get; set; }
+    public required int Number { get; set; }
     
     [Required]
     [MinLength(1)]

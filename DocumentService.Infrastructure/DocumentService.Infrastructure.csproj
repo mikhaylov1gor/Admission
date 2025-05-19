@@ -7,13 +7,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Persistence\" />
-      <Folder Include="Repositories\" />
+      <ProjectReference Include="..\DocumentService.Application\DocumentService.Application.csproj" />
+      <ProjectReference Include="..\DocumentService.Domain\DocumentService.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DocumentService.Application\DocumentService.Application.csproj" />
-      <ProjectReference Include="..\DocumentService.Domain\DocumentService.Domain.csproj" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
     </ItemGroup>
 
 </Project>

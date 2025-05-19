@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Contract.Api\Contract.Api.csproj" />
       <ProjectReference Include="..\DocumentService.Application\DocumentService.Application.csproj" />
     </ItemGroup>
 

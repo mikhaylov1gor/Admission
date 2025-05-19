@@ -4,6 +4,9 @@ namespace DocumentService.Domain.Entities;
 
 public class Document
 {
+    public Guid Id { get; set; }
+    public required Guid ApplicantId { get; set; }
+    
     public ICollection<File> Files { get; set; } = new List<File>();
-    public DocumentType DocumentType { get; set; }
+    public required DocumentType DocumentType { get; set; }
 }
