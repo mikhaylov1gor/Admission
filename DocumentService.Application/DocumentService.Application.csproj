@@ -11,4 +11,8 @@
       <ProjectReference Include="..\DocumentService.Domain\DocumentService.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
+    </ItemGroup>
+
 </Project>

@@ -6,4 +6,6 @@ public class FileDto
     public required DateTime CreatedTime { get; set; }
     public DateTime? ModifiedTime { get; set; }
     public required string Name { get; set; }
+    
+    public required FileResponse File { get; set; }
 }

@@ -19,73 +19,85 @@ public class DocumentController : ControllerBase
     [HttpPost("{id}/Scan")]
     public async Task<IActionResult> UploadFileToDocument(Guid id, [FromForm] string scan)
     {
-        return Ok();
+        var response = await _documentService.UploadScanToDocument(id, scan);
+        return Ok(response);
     }
 
     [HttpGet("Scan/{id}")]
     public async Task<IActionResult> DownloadScan(Guid id)
     {
-        return Ok();
+        var response = await _documentService.DownloadDocumentScan(id);
+        return Ok(response.Value);
     }
 
     [HttpPut("Scan/{id}")]
     public async Task<IActionResult> EditScan(Guid id, [FromForm] string scan)
     {
-        return Ok();
+        var response = await _documentService.UpdateDocumentScan(id, scan);
+        return Ok(response);
     }
 
     [HttpDelete("Scan/{id}")]
     public async Task<IActionResult> DeleteScan(Guid id)
     {
-        return Ok();
+        var response = await _documentService.DeleteDocumentScan(id);
+        return Ok(response);
     }
 
     [HttpPost("Passport")]
     public async Task<IActionResult> CreatePassport(CreatePassportDto dto)
     {
-        return Ok();
+        var response = await _documentService.CreatePassport(dto);
+        return Ok(response);
     }
 
     [HttpGet("Passport")]
     public async Task<IActionResult> GetPassport()
     {
-        return Ok();
+        var response = await _documentService.GetPassport();
+        return Ok(response.Value);
     }
 
     [HttpPut("Passport")]
     public async Task<IActionResult> EditPassport(EditPassportDto dto)
     {
-        return Ok();
+        var response = await _documentService.EditPassport(dto);
+        return Ok(response);
     }
 
     [HttpDelete("Passport")]
     public async Task<IActionResult> DeletePassport()
     {
-        return Ok();
+        var response = await _documentService.DeletePassport();
+        return Ok(response);
     }
 
     [HttpPost("Education")]
     public async Task<IActionResult> CreateEducationDocument(CreateEducationDocumentDto dto)
     {
-        return Ok();
+        var response = await _documentService.CreateEducationDocument(dto);
+        return Ok(response);
     }
 
     [HttpGet("Education")]
-    public async Task<IActionResult> GetEducationDocument()
+    public async Task<IActionResult> GetEducationDocument() 
     {
-        return Ok();
+        var response = await _documentService.GetEducationDocument();
+        return Ok(response.Value);
     }
 
     [HttpPut("Education")]
     public async Task<IActionResult> EditEducationDocument(EditEducationDocumentDto dto)
     {
-        return Ok();
+        var response = await _documentService.EditEducationDocument(dto);
+        return Ok(response);
     }
 
     [HttpDelete("Education")]
     public async Task<IActionResult> DeleteEducationDocument()
     {
-        return Ok();
+        var response = await _documentService.DeleteEducationDocument();
+        return Ok(response);
     }
 }
     
