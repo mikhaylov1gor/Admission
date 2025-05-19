@@ -6,11 +6,6 @@ namespace DocumentService.Application.Services.DocumentService;
 
 public interface IDocumentService
 {
-    Task<Result> UploadScanToDocument(Guid documentId, string scanFile, Guid userId);
-    Task<GenericResult<FileResponse>> DownloadDocumentScan(Guid documentId, Guid userId);
-    Task<Result> UpdateDocumentScan (Guid documentId, string scanFile, Guid userId);
-    Task<Result> DeleteDocumentScan(Guid documentId, Guid userId);
-    
     Task<GenericResult<Guid>> CreatePassport(CreatePassportDto passport, Guid userId);
     Task<GenericResult<PassportDto>> GetPassport(Guid userId);
     Task<Result> EditPassport(EditPassportDto passport, Guid userId);

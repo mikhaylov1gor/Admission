@@ -20,26 +20,6 @@ public class DocumentService : IDocumentService
         _educationDocumentRepository = educationDocumentRepository;
     }
     
-    public async Task<Result> UploadScanToDocument(Guid documentId, string scanFile, Guid userId)
-    {
-        return null;
-    }
-
-    public async Task<GenericResult<FileResponse>> DownloadDocumentScan(Guid documentId, Guid userId)
-    {
-        return null;
-    }
-
-    public async Task<Result> UpdateDocumentScan(Guid documentId, string scanFile, Guid userId)
-    {
-        return null;
-    }
-
-    public async Task<Result> DeleteDocumentScan(Guid documentId, Guid userId)
-    {
-        return null;
-    }
-
     public async Task<GenericResult<Guid>> CreatePassport(CreatePassportDto dto, Guid userId)
     {
         var existingPassport = await _passportRepository.GetByUserIdAsync(userId);
