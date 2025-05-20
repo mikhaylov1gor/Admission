@@ -17,13 +17,18 @@ public class ScanService : IScanService
         _documentRepository = documentRepository;
     }
     
-    public async Task<GenericResult<Guid>> UploadScanToDocument(Guid documentId, CreateScanDto dto, Guid userId)
+    public async Task<Guid> UploadScanToDocument(Guid documentId, CreateScanDto dto, Guid userId)
     {
         var document = await _documentRepository.GetDocumentByUserIdAndDocumentIdAsync(documentId, userId);
 
         if (document == null)
         {
             throw new NotFoundException("Document not found");
+        }
+        
+        if (dto.File == null || dto.File.Length == 0)
+        {
+            throw new BadRequestException("File is empty or missing");
         }
         
         byte[] fileBytes;
@@ -44,13 +49,12 @@ public class ScanService : IScanService
             FileSize = fileBytes.Length,
         };
 
-        document.Files.Add(newFile);
-        
-        await _documentRepository.SaveChangesAsync();
-        return GenericResult<Guid>.Success(newFile.Id);
+        await _documentRepository.AddFileAsync(newFile);
+
+        return newFile.Id;
     }
 
-    public async Task<GenericResult<FileDto>> DownloadDocumentScan(Guid scanId, Guid userId)
+    public async Task<DownloadFileDto> DownloadDocumentScan(Guid scanId, Guid userId)
     {
         var file = await _documentRepository.GetFileByScanIdAndUserIdAsync(scanId, userId);
     
@@ -59,14 +63,13 @@ public class ScanService : IScanService
            throw new NotFoundException("Scan not found");
         }
 
-        var response = new FileDto
+        return new DownloadFileDto()
         {
             Data = file.Data,
             FileName = $"{file.FileName}.{file.Extension}",
             ContentType = GetContentType(file.Extension)
         };
 
-        return GenericResult<FileDto>.Success(response);
     }
 
     public async Task<Result> UpdateDocumentScan(Guid scanId, UpdateScanDto dto, Guid userId)

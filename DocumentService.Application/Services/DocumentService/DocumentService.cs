@@ -20,7 +20,7 @@ public class DocumentService : IDocumentService
         _educationDocumentRepository = educationDocumentRepository;
     }
     
-    public async Task<GenericResult<Guid>> CreatePassport(CreatePassportDto dto, Guid userId)
+    public async Task<Guid> CreatePassport(CreatePassportDto dto, Guid userId)
     {
         var existingPassport = await _passportRepository.GetByUserIdAsync(userId);
         if (existingPassport != null)
@@ -40,13 +40,14 @@ public class DocumentService : IDocumentService
             WhenIssued = dto.WhenIssued,
             WhoIssued = dto.WhoIssued
         };
+        
         await _passportRepository.AddAsync(passport);
         await _passportRepository.SaveChangesAsync();
 
-        return GenericResult<Guid>.Success(passport.Id);
+        return passport.Id;
     }
 
-    public async Task<GenericResult<PassportDto>> GetPassport(Guid userId)
+    public async Task<PassportDto> GetPassport(Guid userId)
     {
         var existingPassport = await _passportRepository.GetByUserIdAsync(userId);
         if (existingPassport == null)
@@ -66,7 +67,17 @@ public class DocumentService : IDocumentService
             WhoIssued = existingPassport.WhoIssued
         };
         
-        return GenericResult<PassportDto>.Success(passportDto);
+        var docFiles = existingPassport.Files?
+            .Select(f => new FileDto
+            {
+                Id = f.Id,
+                FileName = $"{f.FileName}.{f.Extension}",
+            })
+            .ToList() ?? new List<FileDto>();
+        
+        passportDto.Files = docFiles;
+
+        return passportDto;
     }
 
     public async Task<Result> EditPassport(EditPassportDto dto, Guid userId)
@@ -82,6 +93,7 @@ public class DocumentService : IDocumentService
         existingPassport.Hometown = dto.Hometown;
         existingPassport.WhenIssued = dto.WhenIssued;
         existingPassport.WhoIssued = dto.WhoIssued;
+        existingPassport.ModifiedTime = DateTime.UtcNow;
         
         await _passportRepository.SaveChangesAsync();
         
@@ -100,9 +112,9 @@ public class DocumentService : IDocumentService
         return Result.Success();
     }
 
-    public async Task<GenericResult<Guid>> CreateEducationDocument(CreateEducationDocumentDto dto, Guid userId)
+    public async Task<Guid> CreateEducationDocument(CreateEducationDocumentDto dto, Guid userId)
     {
-        var existingEducationDocument = await _passportRepository.GetByUserIdAsync(userId);
+        var existingEducationDocument = await _educationDocumentRepository.GetByUserIdAsync(userId);
         if (existingEducationDocument != null)
         {
             throw new BadRequestException("Education document already exists");
@@ -111,20 +123,21 @@ public class DocumentService : IDocumentService
         var educationDocument = new EducationDocument
         {
             Id = Guid.NewGuid(),
+            ApplicantId = userId,
+            DocumentType = DocumentType.EducationDocument,
+            CreatedTime = DateTime.UtcNow,
+            
             Name = dto.Name,
             EducationDocumentTypeId = dto.EducationDocumentTypeId,
-            ApplicantId = userId,
-            DocumentType = DocumentType.Passport,
-            CreatedTime = DateTime.UtcNow,
         };
         
         await _educationDocumentRepository.AddAsync(educationDocument);
         await _educationDocumentRepository.SaveChangesAsync();
-        
-        return GenericResult<Guid>.Success(educationDocument.Id);
+
+        return educationDocument.Id;
     }
 
-    public async Task<GenericResult<EducationDocumentDto>> GetEducationDocument(Guid userId)
+    public async Task<EducationDocumentDto> GetEducationDocument(Guid userId)
     {
         var existingEducationDocument = await _educationDocumentRepository.GetByUserIdAsync(userId);
         if (existingEducationDocument == null)
@@ -150,7 +163,17 @@ public class DocumentService : IDocumentService
             Name = existingEducationDocument.Name,
         };
         
-        return GenericResult<EducationDocumentDto>.Success(educationDocumentDto);
+        var docFiles = existingEducationDocument.Files?
+            .Select(f => new FileDto
+            {
+                Id = f.Id,
+                FileName = $"{f.FileName}.{f.Extension}",
+            })
+            .ToList() ?? new List<FileDto>();
+        
+        educationDocumentDto.Files = docFiles;
+
+        return educationDocumentDto;
     }
 
     public async Task<Result> EditEducationDocument(EditEducationDocumentDto dto, Guid userId)
@@ -163,6 +186,7 @@ public class DocumentService : IDocumentService
         
         existingEducationDocument.Name = dto.Name;
         existingEducationDocument.EducationDocumentTypeId = dto.EducationDocumentTypeId;
+        existingEducationDocument.ModifiedTime = DateTime.Now;
         
         await _educationDocumentRepository.SaveChangesAsync();
         return Result.Success();

@@ -2,7 +2,7 @@
 
 public class EducationDocumentType
 {
-    public Guid Id { get; private set; }
+    public Guid Id { get; set; }
     public required DateTime CreateTime {get; set;}
     public required string Name {get; set;}
     public required EducationLevel EducationLevel {get; set;}

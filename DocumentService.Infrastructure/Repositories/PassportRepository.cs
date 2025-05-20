@@ -3,6 +3,7 @@ using DocumentService.Domain.Entities;
 using DocumentService.Domain.IRepositories;
 using DocumentService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using File = DocumentService.Domain.Entities.File;
 
 namespace DocumentService.Infrastructure.Repositories;
 
@@ -26,6 +27,7 @@ public class PassportRepository : IPassportRepository
     {
         return await _context.Documents
             .OfType<Passport>()
+            .Include(d => d.Files)
             .FirstOrDefaultAsync(p => p.ApplicantId == userId);
     }
 

@@ -4,6 +4,7 @@ using DictionaryService.Application.Services.UpdateDictionaryService;
 using DictionaryService.Domain.IRepositories;
 using DictionaryService.Infrastructure.Persistence;
 using DictionaryService.Infrastructure.Repositories;
+using DictionaryService.Infrastructure.Services.SeedDataService;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +23,11 @@ services.AddScoped<IEducationProgramRepository, EducationProgramRepository>();
 services.AddScoped<IFacultyRepository, FacultyRepository>();
 
 // injections of services
+services.AddHttpClient(); 
 services.AddScoped<IDictionaryService, DictionaryService.Application.Services.DictionaryService.DictionaryService>();
 services.AddScoped<IUpdateDictionaryService, UpdateDictionaryService>();
+services.AddScoped<ISeedDataService, SeedDataService>();
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
@@ -36,6 +40,7 @@ var app = builder.Build();
 
 // injections of middlewarries
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<SeedDataMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

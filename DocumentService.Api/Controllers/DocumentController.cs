@@ -2,6 +2,7 @@
 using DocumentService.Application.Dtos.Requests;
 using DocumentService.Application.Dtos.Responses;
 using DocumentService.Application.Services.DocumentService;
+using DocumentService.Application.Services.ScanService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentService.Api.Controllers;
@@ -11,37 +12,41 @@ namespace DocumentService.Api.Controllers;
 public class DocumentController : BaseController
 {
     private readonly IDocumentService _documentService;
+    private readonly IScanService _scanService;
 
-    public DocumentController(IDocumentService documentService)
+    public DocumentController(
+        IDocumentService documentService,
+        IScanService scanService)
     {
         _documentService = documentService;
+        _scanService = scanService;
     }
 
-    [HttpPost("{id}/Scan")]
-    public async Task<IActionResult> UploadFileToDocument(Guid id, [FromForm] string scan)
+    [HttpPost("{documentId}/Scan")]
+    public async Task<IActionResult> UploadFileToDocument(Guid documentId, CreateScanDto dto)
     {
-        var response = await _documentService.UploadScanToDocument(id, scan, UserId);
+        var response = await _scanService.UploadScanToDocument(documentId, dto, UserId);
         return Ok(response);
     }
 
-    [HttpGet("Scan/{id}")]
-    public async Task<IActionResult> DownloadScan(Guid id)
+    [HttpGet("Scan/{scanId}")]
+    public async Task<IActionResult> DownloadScan(Guid scanId)
     {
-        var response = await _documentService.DownloadDocumentScan(id, UserId);
-        return Ok(response.Value);
+        var response = await _scanService.DownloadDocumentScan(scanId, UserId);
+        return File(response.Data, response.ContentType, response.FileName);
     }
 
-    [HttpPut("Scan/{id}")]
-    public async Task<IActionResult> EditScan(Guid id, [FromForm] string scan)
+    [HttpPut("Scan/{scanId}")]
+    public async Task<IActionResult> EditScan(Guid scanId, UpdateScanDto dto)
     {
-        var response = await _documentService.UpdateDocumentScan(id, scan, UserId);
+        var response = await _scanService.UpdateDocumentScan(scanId, dto, UserId);
         return Ok(response);
     }
 
-    [HttpDelete("Scan/{id}")]
-    public async Task<IActionResult> DeleteScan(Guid id)
+    [HttpDelete("Scan/{scanId}")]
+    public async Task<IActionResult> DeleteScan(Guid scanId)
     {
-        var response = await _documentService.DeleteDocumentScan(id, UserId);
+        var response = await _scanService.DeleteDocumentScan(scanId, UserId);
         return Ok(response);
     }
 
@@ -56,7 +61,7 @@ public class DocumentController : BaseController
     public async Task<IActionResult> GetPassport()
     {
         var response = await _documentService.GetPassport(UserId);
-        return Ok(response.Value);
+        return Ok(response);
     }
 
     [HttpPut("Passport")]
@@ -84,7 +89,7 @@ public class DocumentController : BaseController
     public async Task<IActionResult> GetEducationDocument() 
     {
         var response = await _documentService.GetEducationDocument(UserId);
-        return Ok(response.Value);
+        return Ok(response);
     }
 
     [HttpPut("Education")]

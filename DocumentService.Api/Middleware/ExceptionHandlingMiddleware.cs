@@ -34,10 +34,10 @@ public class ExceptionHandlingMiddleware
 
         switch (ex)
         {
-            case ValidationException validationException:
+            case BadRequestException badRequestException:
                 status = HttpStatusCode.BadRequest;
-                response = new { error = validationException.Message };
-                _logger.LogWarning(ex, "Validation error");
+                response = new { error = badRequestException.Message };
+                _logger.LogWarning(ex, "Bad request");
                 break;
             case Contract.Application.Exceptions.UnauthorizedAccessException unauthorizedAccessException:
                 status = HttpStatusCode.Unauthorized;
@@ -58,7 +58,8 @@ public class ExceptionHandlingMiddleware
             default:
                 status = HttpStatusCode.InternalServerError;
                 response = new { error = "Internal server error" };
-                _logger.LogError(ex, "Internal server error");
+                _logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
+
                 break;
         }
         

@@ -27,6 +27,12 @@ public class DocumentRepository : IDocumentRepository
             .FirstOrDefaultAsync(f => f.Id == scanId && f.Document.ApplicantId == userId);
     }
 
+    public async Task AddFileAsync(File file)
+    {
+        await _context.Files.AddAsync(file);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task DeleteFileAsync(File file)
     {
         _context.Files.Remove(file);

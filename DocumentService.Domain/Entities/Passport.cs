@@ -2,9 +2,6 @@
 
 public class Passport : Document
 {
-    public required DateTime CreatedTime {get; set;} = DateTime.UtcNow;
-    public DateTime? ModifiedTime {get; set;}
-    
     public required int Serial { get; set; }
     public required int Number { get; set; }
     public required string Hometown { get; set; }

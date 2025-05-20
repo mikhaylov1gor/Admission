@@ -26,6 +26,7 @@ public class EducationDocumentRepository : IEducationDocumentRepository
     {
         return await _context.Documents
             .OfType<EducationDocument>()
+            .Include(d => d.Files)
             .FirstOrDefaultAsync(p => p.ApplicantId == userId);
     }
 
