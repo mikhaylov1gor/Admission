@@ -3,6 +3,7 @@ using DocumentService.Application.Dtos.Requests;
 using DocumentService.Application.Dtos.Responses;
 using DocumentService.Application.Services.DocumentService;
 using DocumentService.Application.Services.ScanService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentService.Api.Controllers;
@@ -22,6 +23,7 @@ public class DocumentController : BaseController
         _scanService = scanService;
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPost("{documentId}/Scan")]
     public async Task<IActionResult> UploadFileToDocument(Guid documentId, CreateScanDto dto)
     {
@@ -29,6 +31,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpGet("Scan/{scanId}")]
     public async Task<IActionResult> DownloadScan(Guid scanId)
     {
@@ -36,6 +39,7 @@ public class DocumentController : BaseController
         return File(response.Data, response.ContentType, response.FileName);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPut("Scan/{scanId}")]
     public async Task<IActionResult> EditScan(Guid scanId, UpdateScanDto dto)
     {
@@ -43,6 +47,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpDelete("Scan/{scanId}")]
     public async Task<IActionResult> DeleteScan(Guid scanId)
     {
@@ -50,6 +55,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPost("Passport")]
     public async Task<IActionResult> CreatePassport(CreatePassportDto dto)
     {
@@ -57,6 +63,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpGet("Passport")]
     public async Task<IActionResult> GetPassport()
     {
@@ -64,6 +71,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPut("Passport")]
     public async Task<IActionResult> EditPassport(EditPassportDto dto)
     {
@@ -71,6 +79,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpDelete("Passport")]
     public async Task<IActionResult> DeletePassport()
     {
@@ -78,6 +87,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPost("Education")]
     public async Task<IActionResult> CreateEducationDocument(CreateEducationDocumentDto dto)
     {
@@ -85,6 +95,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpGet("Education")]
     public async Task<IActionResult> GetEducationDocument() 
     {
@@ -92,6 +103,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPut("Education")]
     public async Task<IActionResult> EditEducationDocument(EditEducationDocumentDto dto)
     {
@@ -99,6 +111,7 @@ public class DocumentController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpDelete("Education")]
     public async Task<IActionResult> DeleteEducationDocument()
     {
