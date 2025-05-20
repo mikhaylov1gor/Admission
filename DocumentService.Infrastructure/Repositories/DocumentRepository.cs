@@ -26,7 +26,7 @@ public class DocumentRepository : IDocumentRepository
         return await _context.Files
             .FirstOrDefaultAsync(f => f.Id == scanId && f.Document.ApplicantId == userId);
     }
-
+    
     public async Task AddFileAsync(File file)
     {
         await _context.Files.AddAsync(file);

@@ -3,6 +3,7 @@ using Contract.Application.Exceptions;
 using Contract.Domain.Enums;
 using DocumentService.Application.Dtos.Requests;
 using DocumentService.Application.Dtos.Responses;
+using DocumentService.Application.Services.DictionaryServiceClient;
 using DocumentService.Domain.Entities;
 using DocumentService.Domain.IRepositories;
 
@@ -11,13 +12,19 @@ namespace DocumentService.Application.Services.DocumentService;
 public class DocumentService : IDocumentService
 {
     private readonly IPassportRepository _passportRepository;
+    private readonly IEducationDocumentTypeRepository _educationDocumentTypeRepository;
     private readonly IEducationDocumentRepository _educationDocumentRepository;
+    private readonly IDictionaryServiceClient _dictionaryServiceClient;
     public DocumentService(
         IPassportRepository  passportRepository,
-        IEducationDocumentRepository   educationDocumentRepository)
+        IEducationDocumentRepository   educationDocumentRepository,
+        IEducationDocumentTypeRepository educationDocumentTypeRepository,
+        IDictionaryServiceClient dictionaryServiceClient)
     {
         _passportRepository = passportRepository;
         _educationDocumentRepository = educationDocumentRepository;
+        _educationDocumentTypeRepository = educationDocumentTypeRepository;
+        _dictionaryServiceClient = dictionaryServiceClient;
     }
     
     public async Task<Guid> CreatePassport(CreatePassportDto dto, Guid userId)
@@ -120,6 +127,36 @@ public class DocumentService : IDocumentService
             throw new BadRequestException("Education document already exists");
         }
 
+        var externalEducationDocumentTypes = await _dictionaryServiceClient.GetEducationDocumentTypesAsync();
+        
+        var documentType = externalEducationDocumentTypes.FirstOrDefault(d => d.Id == dto.EducationDocumentTypeId);
+        if (documentType == null)
+        {
+            throw new BadRequestException("Invalid EducationDocumentTypeId");
+        }
+        
+        var existingType = await _educationDocumentTypeRepository.GetEducationDocumentTypeByIdAsync(documentType.Id);
+
+        EducationDocumentType typeEntity;
+        if (existingType != null)
+        {
+            typeEntity = existingType;
+        }
+        else
+        {
+            typeEntity = new EducationDocumentType
+            {
+                Id = documentType.Id,
+                Name = documentType.Name,
+                EducationLevel = new EducationLevel
+                {
+                    Id = documentType.EducationLevel.Id,
+                    Name = documentType.EducationLevel.Name
+                }
+            };
+        }
+
+
         var educationDocument = new EducationDocument
         {
             Id = Guid.NewGuid(),
@@ -129,6 +166,7 @@ public class DocumentService : IDocumentService
             
             Name = dto.Name,
             EducationDocumentTypeId = dto.EducationDocumentTypeId,
+            EducationDocumentType = typeEntity,
         };
         
         await _educationDocumentRepository.AddAsync(educationDocument);
@@ -184,9 +222,42 @@ public class DocumentService : IDocumentService
             throw new NotFoundException("Education document not found");
         }
         
+        var externalEducationDocumentTypes = await _dictionaryServiceClient.GetEducationDocumentTypesAsync();
+        
+        var documentType = externalEducationDocumentTypes.FirstOrDefault(d => d.Id == dto.EducationDocumentTypeId);
+        if (documentType == null)
+        {
+            throw new BadRequestException("Invalid EducationDocumentTypeId");
+        }
+        
+        var existingType = await _educationDocumentTypeRepository.GetEducationDocumentTypeByIdAsync(documentType.Id);
+
+        EducationDocumentType typeEntity;
+        if (existingType != null)
+        {
+            typeEntity = existingType;
+        }
+        else
+        {
+            typeEntity = new EducationDocumentType
+            {
+                Id = documentType.Id,
+                Name = documentType.Name,
+                EducationLevel = new EducationLevel
+                {
+                    Id = documentType.EducationLevel.Id,
+                    Name = documentType.EducationLevel.Name
+                }
+            };
+            
+            await _educationDocumentTypeRepository.AddAsync(typeEntity);
+        }
+        
+        
         existingEducationDocument.Name = dto.Name;
+        existingEducationDocument.ModifiedTime = DateTime.UtcNow;
         existingEducationDocument.EducationDocumentTypeId = dto.EducationDocumentTypeId;
-        existingEducationDocument.ModifiedTime = DateTime.Now;
+        existingEducationDocument.EducationDocumentType = typeEntity;
         
         await _educationDocumentRepository.SaveChangesAsync();
         return Result.Success();

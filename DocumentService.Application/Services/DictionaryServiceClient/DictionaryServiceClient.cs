@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DocumentService.Application.Services.DictionaryServiceClient;
 
-public class DictionaryServiceClient
+public class DictionaryServiceClient : IDictionaryServiceClient
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<DictionaryServiceClient> _logger;
@@ -15,18 +15,17 @@ public class DictionaryServiceClient
         _logger = logger;
     }
 
-    public async Task<EducationDocumentTypeDto?> GetEducationDocumentTypeAsync(Guid id)
+    public async Task<List<EducationDocumentTypeDto>?> GetEducationDocumentTypesAsync()
     {
-        var response = await _httpClient.GetAsync($"/education-document-types/{id}");
+        var response = await _httpClient.GetAsync($"/api/Dictionary/documentTypes");
         
         if (!response.IsSuccessStatusCode)
         {
-            _logger.LogWarning("DirectoryService returned {StatusCode} for ID {Id}", response.StatusCode, id);
             return null;
         }
 
         var content = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<EducationDocumentTypeDto>(content, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<List<EducationDocumentTypeDto>>(content, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });

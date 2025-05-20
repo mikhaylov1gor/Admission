@@ -1,4 +1,5 @@
 using DocumentService.Api.Middleware;
+using DocumentService.Application.Services.DictionaryServiceClient;
 using DocumentService.Application.Services.DocumentService;
 using DocumentService.Application.Services.ScanService;
 using DocumentService.Domain.IRepositories;
@@ -20,6 +21,7 @@ services.AddDbContext<DocumentDbContext>(options =>
 services.AddScoped<IDocumentRepository, DocumentRepository>();
 services.AddScoped<IEducationDocumentRepository, EducationDocumentRepository>();
 services.AddScoped<IPassportRepository, PassportRepository>();
+services.AddScoped<IEducationDocumentTypeRepository, EducationDocumentTypeRepository>();
 
 // injections of services
 services.AddScoped<IDocumentService, DocumentService.Application.Services.DocumentService.DocumentService>();
@@ -31,6 +33,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// injections of external http services
+services.AddHttpClient<IDictionaryServiceClient,DictionaryServiceClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5000");
+});
+
 
 var app = builder.Build();
 
