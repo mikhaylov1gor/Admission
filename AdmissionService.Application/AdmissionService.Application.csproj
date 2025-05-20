@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Dtos\Requests\" />
       <Folder Include="Dtos\Responses\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\AdmissionService.Domain\AdmissionService.Domain.csproj" />
+      <ProjectReference Include="..\Contract.Application\Contract.Application.csproj" />
     </ItemGroup>
 
 </Project>
