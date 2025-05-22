@@ -5,7 +5,7 @@ namespace Contract.Application.Validations;
 
 public class Priority: ValidationAttribute
 {
-    private const int maxPriority = 5;
+    public const int MaxPriority = 5;
     
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
@@ -14,7 +14,7 @@ public class Priority: ValidationAttribute
 
         if (value is int intValue)
         {
-            if (intValue >= 1 && intValue <= maxPriority)
+            if (intValue >= 1 && intValue <= MaxPriority)
                 return ValidationResult.Success;
             else
                 return new ValidationResult("Page Size must be greater than 0 and less than {maxPriority}.");

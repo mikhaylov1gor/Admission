@@ -19,4 +19,9 @@ public class EducationLevelRepository : IEducationLevelRepository
         return await _context.EducationLevels
             .ToListAsync();
     }
+
+    public async Task<EducationLevel> GetByIdAsync(Guid id)
+    {
+        return await _context.EducationLevels.FindAsync(id);
+    }
 }

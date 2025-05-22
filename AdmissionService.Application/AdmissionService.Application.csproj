@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Dtos\Responses\" />
+      <ProjectReference Include="..\AdmissionService.Domain\AdmissionService.Domain.csproj" />
+      <ProjectReference Include="..\Contract.Application\Contract.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AdmissionService.Domain\AdmissionService.Domain.csproj" />
-      <ProjectReference Include="..\Contract.Application\Contract.Application.csproj" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
     </ItemGroup>
 
 </Project>

@@ -36,7 +36,7 @@ public class ExceptionHandlingMiddleware
 
         switch (ex)
         {
-            case ValidationException validationException:
+            case BadRequestException validationException:
                 status = HttpStatusCode.BadRequest;
                 response = new { error = validationException.Message };
                 _logger.LogWarning(ex, "Validation error");

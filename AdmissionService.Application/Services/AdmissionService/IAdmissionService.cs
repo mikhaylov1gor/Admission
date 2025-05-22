@@ -1,6 +1,10 @@
-﻿namespace AdmissionService.Application.Services.AdmissionService;
+﻿using AdmissionService.Application.Dtos.Responses;
 
-public class IAdmissionService
+namespace AdmissionService.Application.Services.AdmissionService;
+
+public interface IAdmissionService
 {
+    Task <Guid> CreateAdmission(Guid userId);
     
+    Task <StudentAdmissionDto> GetAdmissionById(Guid admissionId, Guid userId);
 }

@@ -10,6 +10,7 @@ public class StudentAdmission
     
     public Guid? ManagerId { get; set; }
     public required Guid ApplicantId { get; set; }
+    public int AdmissionSeasonId { get; set; }
     public AdmissionStatus Status { get; set; }
     public ICollection<AdmissionProgram>? AdmissionPrograms { get; set; } = new List<AdmissionProgram>();
 }

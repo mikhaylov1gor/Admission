@@ -2,6 +2,7 @@
 using Contract.Application.Exceptions;
 using DictionaryService.Application.Dtos.Requests;
 using DictionaryService.Application.Dtos.Responses;
+using DictionaryService.Domain.Entities;
 using DictionaryService.Domain.IRepositories;
 
 namespace DictionaryService.Application.Services.DictionaryService;
@@ -133,5 +134,60 @@ public class DictionaryService : IDictionaryService
                 Current = parameters.Page,
             }
         });
+    }
+
+    public async Task <EducationProgramDto> GetProgramById(Guid programId)
+    {
+        var program = await _educationProgramRepository.GetProgramById(programId);
+
+        if (program == null)
+        {
+            throw new NotFoundException("Program not found");
+        }
+
+        var faculty = new FacultyDto
+        {
+            Id = program.Faculty.Id,
+            CreateTime = program.Faculty.CreateTime,
+            Name = program.Faculty.Name,
+        };
+
+        var educationLevel = new EducationLevelDto
+        {
+            Id = program.EducationLevel.Id,
+            Name = program.EducationLevel.Name,
+        };
+
+        var programDto = new EducationProgramDto
+        {
+            Id = program.Id,
+            CreateTime = program.CreateTime,
+            Name = program.Name,
+            Code = program.Code,
+            Language = program.Language,
+            EducationForm = program.EducationForm,
+            Faculty = faculty,
+            EducationLevel = educationLevel,
+        };
+        
+        return programDto;
+    }
+
+    public async Task<EducationLevelDto> GetEducationLevelById(Guid educationLevelId)
+    {
+        var educationLevel = await _educationLevelRepository.GetByIdAsync(educationLevelId);
+
+        if (educationLevel == null)
+        {
+            throw new NotFoundException("Education level not found");
+        }
+
+        var educationLevelDto = new EducationLevelDto
+        {
+            Id = educationLevel.Id,
+            Name = educationLevel.Name
+        };
+        
+        return educationLevelDto;
     }
 }

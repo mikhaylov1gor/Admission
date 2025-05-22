@@ -1,4 +1,5 @@
-﻿using DictionaryService.Domain.Entities;
+﻿using DictionaryService.Application.Dtos.Responses;
+using DictionaryService.Domain.Entities;
 using DictionaryService.Domain.IRepositories;
 using DictionaryService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -42,5 +43,13 @@ public class EducationProgramRepository : IEducationProgramRepository
             .Include(p => p.Faculty)
             .Include(p => p.EducationLevel)
             .ToListAsync();
+    }
+
+    public async Task<EducationProgram?> GetProgramById(Guid programId)
+    {
+        return await _context.EducationPrograms
+            .Include(p => p.Faculty)
+            .Include(p => p.EducationLevel)
+            .FirstOrDefaultAsync(ep => ep.Id == programId);
     }
 }

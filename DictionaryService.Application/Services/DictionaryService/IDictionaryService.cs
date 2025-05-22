@@ -10,4 +10,6 @@ public interface IDictionaryService
     Task<GenericResult<List<EducationDocumentTypeDto>>> GetDocumentTypes();
     Task<GenericResult<List<FacultyDto>>> GetFaculties();
     Task<GenericResult<ProgramPagedListDto>> GetPrograms(FilterParametersDto parameters);
+    Task<EducationProgramDto> GetProgramById(Guid programId);
+    Task<EducationLevelDto> GetEducationLevelById(Guid educationLevelId);
 }

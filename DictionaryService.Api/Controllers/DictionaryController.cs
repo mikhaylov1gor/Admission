@@ -41,4 +41,18 @@ public class DictionaryController : ControllerBase
         var response = await _dictionaryService.GetPrograms(parameters);
         return Ok(response.Value);
     }
+
+    [HttpGet("program/{programId}")]
+    public async Task<IActionResult> GetProgram(Guid programId)
+    {
+        var response = await _dictionaryService.GetProgramById(programId);
+        return Ok(response);
+    }
+
+    [HttpGet("educationLevel/{educationLevelId}")]
+    public async Task<IActionResult> GetEducationLevel(Guid educationLevelId)
+    {
+        var response = await _dictionaryService.GetEducationLevelById(educationLevelId);
+        return Ok(response);
+    }
 }

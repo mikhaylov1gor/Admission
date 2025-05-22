@@ -10,4 +10,6 @@ public interface IEducationProgramRepository
         string? educationForm,
         string? language,
         string? name);
+    
+    Task<EducationProgram?> GetProgramById(Guid programId);
 }
