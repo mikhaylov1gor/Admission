@@ -1,8 +1,54 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using AdminPanel.Mvc.Constants
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Главная страница";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Добро пожаловать в админ панель ТГНУ</h1>
+    <h3 class="text-muted mb-4">(Томский Государственный Несуществующий Университет)</h3>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <div class="card shadow-sm p-4 mb-4 bg-light rounded">
+            @{
+                var userRoles = ValidRoles.Roles.Where(role => User.IsInRole(role)).ToList();
+            }
+
+            @if (userRoles.Any())
+            {
+                <h4 class="text-success mb-3">Ваши роли:</h4>
+                <ul class="list-group list-group-flush">
+                    @foreach (var role in userRoles)
+                    {
+                        <li class="list-group-item bg-transparent">@role</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading">Внимание!</h4>
+                    <p>У вас нет назначенных ролей для работы с системой</p>
+                    <hr>
+                    <p class="mb-0">Обратитесь к администратору для получения прав доступа</p>
+                </div>
+            }
+
+            <div class="mt-4">
+                <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-danger">
+                    Выйти из системы
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm p-4 mb-4 bg-light rounded">
+            <h4 class="mb-3">Доступ к панели управления</h4>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg">
+                Войти в систему
+            </a>
+        </div>
+    }
 </div>
