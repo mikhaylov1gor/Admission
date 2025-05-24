@@ -61,6 +61,26 @@ public class StudentAdmissionRepository : IStudentAdmissionRepository
         await _context.SaveChangesAsync();
     }
     
+    public async Task UpdateAdmissionProgram(AdmissionProgram program)
+    {
+        var existingProgram = await _context.AdmissionPrograms.FindAsync(program.Id);
+        if (existingProgram != null)
+        {
+            existingProgram.Priority = program.Priority;
+            existingProgram.ModifiedTime = DateTime.UtcNow;
+        }
+        
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<StudentAdmission>?> GetStudentAdmissions(Guid userId)
+    {
+        return await _context.StudentAdmissions
+            .Include(sa => sa.AdmissionPrograms)
+            .Where(sa => sa.ApplicantId == userId)
+            .ToListAsync();
+    }
+    
     public async Task AddAdmissionProgramAsync(AdmissionProgram program)
     {
         await _context.AdmissionPrograms.AddAsync(program);

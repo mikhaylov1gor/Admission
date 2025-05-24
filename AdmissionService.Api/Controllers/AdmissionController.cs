@@ -32,6 +32,13 @@ public class AdmissionController : BaseController
         return Ok(response);
     }
 
+    [HttpGet("Admissions/My")]
+    public async Task<IActionResult> GetMyAdmissions()
+    {
+        var response = await _admissionService.GetMyAdmissions(UserId);
+        return Ok(response);
+    }
+
     [HttpGet("Admission/{admissionId}")]
     public async Task<IActionResult> GetAdmissionById(Guid admissionId)
     {
@@ -46,7 +53,7 @@ public class AdmissionController : BaseController
         return Ok();
     }
 
-    [HttpPut("Admission/Programs/Edit")]
+    [HttpPut("Admission/Programs/EditPriorities")]
     public async Task<IActionResult> EditPrograms(EditProgramsDto dto)
     {
         await _programService.EditAdmissionPrograms(dto, UserId);
@@ -54,9 +61,9 @@ public class AdmissionController : BaseController
     }
 
     [HttpDelete("Admission/Program/{programId}/Remove")]
-    public async Task<IActionResult> RemoveProgram(Guid programId, Guid userId)
+    public async Task<IActionResult> RemoveProgram(Guid programId)
     {
-        await _programService.RemoveProgramFromAdmission(programId, userId);
+        await _programService.RemoveProgramFromAdmission(programId, UserId);
         return Ok();
     }
 }

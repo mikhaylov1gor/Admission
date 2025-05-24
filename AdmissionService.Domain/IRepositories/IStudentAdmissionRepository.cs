@@ -9,6 +9,9 @@ public interface IStudentAdmissionRepository
     Task<StudentAdmission?> GetCurrentStudentAdmissionAsync(Guid applicantId);
     Task<StudentAdmission?> GetStudentAdmissionByIdAsync(Guid studentAdmissionId, Guid userId);
     Task DeleteStudentAdmissionProgramByIdAsync(Guid studentAdmissionId, Guid programId);
+    Task UpdateAdmissionProgram(AdmissionProgram program);
+    
+    Task<List<StudentAdmission>?> GetStudentAdmissions(Guid userId);
     
     Task AddAdmissionProgramAsync(AdmissionProgram program);
     Task SaveChangesAsync();

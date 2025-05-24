@@ -49,6 +49,29 @@ public class AdmissionService : IAdmissionService
         return  newAdmission.Id;
     }
 
+    public async Task<List<ShortAdmissionDto>> GetMyAdmissions(Guid userId)
+    {
+        var admissionsDb = await _studentAdmissionRepository.GetStudentAdmissions(userId);
+        
+        var admissionsDto = new List<ShortAdmissionDto>();
+
+        foreach (var admission in admissionsDb)
+        {
+            var admissionDto = new ShortAdmissionDto
+            {
+                Id = admission.Id,
+                Status = admission.Status,
+                IsManagerExist = (admission.ManagerId != null),
+                AdmissionSeasonId = admission.AdmissionSeasonId,
+                ProgramsCount = admission.AdmissionPrograms.Count()
+            };
+            
+            admissionsDto.Add(admissionDto);
+        }
+        
+        return admissionsDto;
+    }
+
     public async Task<StudentAdmissionDto> GetAdmissionById(Guid admissionId, Guid userId)
     {
         var existingAdmission = await _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, userId);

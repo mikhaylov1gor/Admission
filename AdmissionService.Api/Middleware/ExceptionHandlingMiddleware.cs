@@ -60,7 +60,8 @@ public class ExceptionHandlingMiddleware
             default:
                 status = HttpStatusCode.InternalServerError;
                 response = new { error = "Internal server error" };
-                _logger.LogError(ex, "Internal server error");
+                _logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
+
                 break;
         }
         

@@ -7,4 +7,5 @@ public interface IAdmissionService
     Task <Guid> CreateAdmission(Guid userId);
     
     Task <StudentAdmissionDto> GetAdmissionById(Guid admissionId, Guid userId);
+    Task<List<ShortAdmissionDto>> GetMyAdmissions(Guid userId);
 }

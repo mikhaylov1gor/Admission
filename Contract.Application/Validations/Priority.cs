@@ -17,7 +17,7 @@ public class Priority: ValidationAttribute
             if (intValue >= 1 && intValue <= MaxPriority)
                 return ValidationResult.Success;
             else
-                return new ValidationResult("Page Size must be greater than 0 and less than {maxPriority}.");
+                return new ValidationResult($"Page Size must be greater than 0 and less than {MaxPriority}.");
         }
 
         return new ValidationResult("Value type is not supported.");
