@@ -3,6 +3,7 @@ using Contract.Application.Exceptions;
 using Contract.Domain.Enums;
 using DocumentService.Application.Dtos.Requests;
 using DocumentService.Application.Dtos.Responses;
+using DocumentService.Application.Services.AdmissionServiceClient;
 using DocumentService.Application.Services.DictionaryServiceClient;
 using DocumentService.Domain.Entities;
 using DocumentService.Domain.IRepositories;
@@ -15,20 +16,28 @@ public class DocumentService : IDocumentService
     private readonly IEducationDocumentTypeRepository _educationDocumentTypeRepository;
     private readonly IEducationDocumentRepository _educationDocumentRepository;
     private readonly IDictionaryServiceClient _dictionaryServiceClient;
+    private readonly IAdmissionServiceClient _admissionServiceClient;
     public DocumentService(
         IPassportRepository  passportRepository,
         IEducationDocumentRepository   educationDocumentRepository,
         IEducationDocumentTypeRepository educationDocumentTypeRepository,
-        IDictionaryServiceClient dictionaryServiceClient)
+        IDictionaryServiceClient dictionaryServiceClient,
+        IAdmissionServiceClient admissionServiceClient)
     {
         _passportRepository = passportRepository;
         _educationDocumentRepository = educationDocumentRepository;
         _educationDocumentTypeRepository = educationDocumentTypeRepository;
         _dictionaryServiceClient = dictionaryServiceClient;
+        _admissionServiceClient = admissionServiceClient;
     }
     
     public async Task<Guid> CreatePassport(CreatePassportDto dto, Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+        
         var existingPassport = await _passportRepository.GetByUserIdAsync(userId);
         if (existingPassport != null)
         {
@@ -89,6 +98,11 @@ public class DocumentService : IDocumentService
 
     public async Task<Result> EditPassport(EditPassportDto dto, Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+        
         var existingPassport = await _passportRepository.GetByUserIdAsync(userId);
         if (existingPassport == null)
         {
@@ -109,6 +123,11 @@ public class DocumentService : IDocumentService
 
     public async Task<Result> DeletePassport(Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+        
         var existingPassport = await _passportRepository.GetByUserIdAsync(userId);
         if (existingPassport == null)
         {
@@ -121,6 +140,11 @@ public class DocumentService : IDocumentService
 
     public async Task<Guid> CreateEducationDocument(CreateEducationDocumentDto dto, Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+        
         var existingEducationDocument = await _educationDocumentRepository.GetByUserIdAsync(userId);
         if (existingEducationDocument != null)
         {
@@ -216,6 +240,11 @@ public class DocumentService : IDocumentService
 
     public async Task<Result> EditEducationDocument(EditEducationDocumentDto dto, Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+        
         var existingEducationDocument = await _educationDocumentRepository.GetByUserIdAsync(userId);
         if (existingEducationDocument == null)
         {
@@ -253,7 +282,6 @@ public class DocumentService : IDocumentService
             await _educationDocumentTypeRepository.AddAsync(typeEntity);
         }
         
-        
         existingEducationDocument.Name = dto.Name;
         existingEducationDocument.ModifiedTime = DateTime.UtcNow;
         existingEducationDocument.EducationDocumentTypeId = dto.EducationDocumentTypeId;
@@ -265,6 +293,11 @@ public class DocumentService : IDocumentService
 
     public async Task<Result> DeleteEducationDocument(Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+        
         var existingEducationDocument = await _educationDocumentRepository.GetByUserIdAsync(userId);
         if (existingEducationDocument == null)
         {

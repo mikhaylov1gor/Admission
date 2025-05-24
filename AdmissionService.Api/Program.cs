@@ -1,3 +1,5 @@
+using System.Text;
+using AdmissionService.Api.Configurations;
 using AdmissionService.Api.Middleware;
 using AdmissionService.Application.Services.AdmissionService;
 using AdmissionService.Application.Services.DictionaryServiceClient;
@@ -6,12 +8,60 @@ using AdmissionService.Application.Services.ProgramService;
 using AdmissionService.Domain.IRepositories;
 using AdmissionService.Infrastructure.Persistence;
 using AdmissionService.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
+
 // Jwt configuration
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+services.Configure<JwtSettings>(jwtSettings);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
+        };
+    });
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter JWT token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 // dbContext injection
 var connectionString = builder.Configuration.GetConnectionString("AdmissionConnection");

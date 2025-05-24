@@ -94,6 +94,11 @@ public class AdmissionService : IAdmissionService
         return studentAdmissionDto; 
     }
 
+    public async Task<bool> IsAdmissionOpen()
+    {
+        return await _admissionSettingRepository.IsAdmissionOpenAsync();
+    }
+
     private async Task<List<AdmissionProgramDto>> loadPrograms(StudentAdmission admission)
     {
         var programs = new List<AdmissionProgramDto>();
@@ -120,4 +125,6 @@ public class AdmissionService : IAdmissionService
         
         return programs;
     }
+    
+    
 }

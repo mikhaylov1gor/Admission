@@ -1,5 +1,6 @@
 using System.Text;
 using DocumentService.Api.Middleware;
+using DocumentService.Application.Services.AdmissionServiceClient;
 using DocumentService.Application.Services.DictionaryServiceClient;
 using DocumentService.Application.Services.DocumentService;
 using DocumentService.Application.Services.ScanService;
@@ -15,6 +16,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
+
 // Jwt configuration
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 services.Configure<JwtSettings>(jwtSettings);
@@ -87,6 +89,11 @@ builder.Services.AddSwaggerGen();
 services.AddHttpClient<IDictionaryServiceClient,DictionaryServiceClient>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5000");
+});
+
+services.AddHttpClient<IAdmissionServiceClient,AdmissionServiceClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5004");
 });
 
 

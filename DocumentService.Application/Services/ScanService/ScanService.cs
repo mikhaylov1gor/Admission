@@ -2,6 +2,7 @@
 using Contract.Application.Exceptions;
 using DocumentService.Application.Dtos.Requests;
 using DocumentService.Application.Dtos.Responses;
+using DocumentService.Application.Services.AdmissionServiceClient;
 using DocumentService.Application.Services.DocumentService;
 using DocumentService.Domain.IRepositories;
 using File = DocumentService.Domain.Entities.File;
@@ -11,14 +12,23 @@ namespace DocumentService.Application.Services.ScanService;
 public class ScanService : IScanService
 {
     private readonly IDocumentRepository _documentRepository;
+    private readonly IAdmissionServiceClient _admissionServiceClient;
 
-    public ScanService(IDocumentRepository  documentRepository)
+    public ScanService(
+        IDocumentRepository  documentRepository,
+        IAdmissionServiceClient admissionServiceClient)
     {
         _documentRepository = documentRepository;
+        _admissionServiceClient = admissionServiceClient;
     }
     
     public async Task<Guid> UploadScanToDocument(Guid documentId, CreateScanDto dto, Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+
         var document = await _documentRepository.GetDocumentByUserIdAndDocumentIdAsync(documentId, userId);
 
         if (document == null)
@@ -74,6 +84,12 @@ public class ScanService : IScanService
 
     public async Task<Result> UpdateDocumentScan(Guid scanId, UpdateScanDto dto, Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+
+        
         var file = await _documentRepository.GetFileByScanIdAndUserIdAsync(scanId, userId);
     
         if (file == null)
@@ -99,6 +115,12 @@ public class ScanService : IScanService
 
     public async Task<Result> DeleteDocumentScan(Guid scanId, Guid userId)
     {
+        if (!await _admissionServiceClient.IsAdmissionOpen())
+        {
+            throw new ForbiddenAccessException("University admission is not currently available");
+        }
+
+        
         var file = await _documentRepository.GetFileByScanIdAndUserIdAsync(scanId, userId);
     
         if (file == null)

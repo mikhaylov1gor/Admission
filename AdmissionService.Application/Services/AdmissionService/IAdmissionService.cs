@@ -8,4 +8,5 @@ public interface IAdmissionService
     
     Task <StudentAdmissionDto> GetAdmissionById(Guid admissionId, Guid userId);
     Task<List<ShortAdmissionDto>> GetMyAdmissions(Guid userId);
+    Task<bool> IsAdmissionOpen();
 }

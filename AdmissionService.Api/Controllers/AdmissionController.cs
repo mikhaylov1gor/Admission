@@ -3,6 +3,7 @@ using AdmissionService.Application.Services.AdmissionService;
 using AdmissionService.Application.Services.DictionaryServiceClient;
 using AdmissionService.Application.Services.ProgramService;
 using Contract.Api.Controller;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdmissionService.Api.Controllers;
@@ -25,6 +26,7 @@ public class AdmissionController : BaseController
         _programService = programService;
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPost("Admission/Create")]
     public async Task<IActionResult> CreateAdmission()
     {
@@ -32,6 +34,7 @@ public class AdmissionController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpGet("Admissions/My")]
     public async Task<IActionResult> GetMyAdmissions()
     {
@@ -39,6 +42,7 @@ public class AdmissionController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpGet("Admission/{admissionId}")]
     public async Task<IActionResult> GetAdmissionById(Guid admissionId)
     {
@@ -46,6 +50,7 @@ public class AdmissionController : BaseController
         return Ok(response);
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPost("Admission/Program/Add")]
     public async Task<IActionResult> AddProgram(AddProgramDto dto)
     {
@@ -53,6 +58,7 @@ public class AdmissionController : BaseController
         return Ok();
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpPut("Admission/Programs/EditPriorities")]
     public async Task<IActionResult> EditPrograms(EditProgramsDto dto)
     {
@@ -60,10 +66,18 @@ public class AdmissionController : BaseController
         return Ok();
     }
 
+    [Authorize(Roles = "Applicant")]
     [HttpDelete("Admission/Program/{programId}/Remove")]
     public async Task<IActionResult> RemoveProgram(Guid programId)
     {
         await _programService.RemoveProgramFromAdmission(programId, UserId);
         return Ok();
+    }
+
+    [HttpGet("University/IsOpen")]
+    public async Task<IActionResult> GetUniversityAdmissionStatus()
+    {
+        var response = await _admissionService.IsAdmissionOpen();
+        return Ok(response);
     }
 }
