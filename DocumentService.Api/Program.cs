@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using DocumentService.Api.Middleware;
 using DocumentService.Application.Services.AdmissionServiceClient;
 using DocumentService.Application.Services.DictionaryServiceClient;
@@ -62,6 +63,13 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+// json deserialize
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // dbContext injection
 var connectionString = builder.Configuration.GetConnectionString("DocumentConnection");

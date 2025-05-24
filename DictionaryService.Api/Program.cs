@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using DictionaryService.Api.Middleware;
 using DictionaryService.Application.Services.DictionaryService;
 using DictionaryService.Application.Services.UpdateDictionaryService;
@@ -10,6 +11,13 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
+
+// json deserialize
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // dbContext injection
 var connectionString = builder.Configuration.GetConnectionString("DictionaryConnection");
@@ -27,7 +35,6 @@ services.AddHttpClient();
 services.AddScoped<IDictionaryService, DictionaryService.Application.Services.DictionaryService.DictionaryService>();
 services.AddScoped<IUpdateDictionaryService, UpdateDictionaryService>();
 services.AddScoped<ISeedDataService, SeedDataService>();
-
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();

@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using AdmissionService.Api.Configurations;
 using AdmissionService.Api.Middleware;
 using AdmissionService.Application.Services.AdmissionService;
@@ -62,6 +63,13 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+// json deserialize
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // dbContext injection
 var connectionString = builder.Configuration.GetConnectionString("AdmissionConnection");
