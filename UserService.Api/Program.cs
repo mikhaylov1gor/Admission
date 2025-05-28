@@ -102,6 +102,13 @@ var app = builder.Build();
 // injections of middlewarries
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+// models ensure creating
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<UserDbContext>();
+    await dbContext.EnsureAdminCreated(); 
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -1,45 +1,62 @@
-﻿using AdminPanel.Mvc.Models;
+﻿using System.Security.Claims;
 using AdminPanel.Mvc.Models.Account;
-using AdminPanel.Mvc.Services.AuthService;
+using AdminPanel.Mvc.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using AdminPanel.Mvc.Services.AuthService;
+using Microsoft.AspNetCore.Authorization;
 
-namespace AdminPanel.Mvc.Controllers
+namespace AdminPanel.Mvc.Controllers;
+
+public class AccountController : Controller
 {
-    public class AccountController : Controller
+    private readonly IAuthService _authService;
+
+    public AccountController(
+        IAuthService authService)
     {
-        private readonly IAuthServiceClient _authServiceClient;
+        _authService = authService;
+    }
 
-        public AccountController(
-            IAuthServiceClient authServiceClient)
+    [HttpGet]
+    public IActionResult Login() => View();
+
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginViewModel loginViewModel)
+    {
+        if (!ModelState.IsValid)
         {
-            _authServiceClient = authServiceClient;
+            return View(loginViewModel);
         }
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
+
+        var identity = await _authService.Login(loginViewModel);
         
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        if (identity == null)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var result = await _authServiceClient.LoginAsync(model.Email, model.Password);
-
-            if (result.Success)
-            {
-                HttpContext.Session.SetString("JWT", result.AccessToken);
-                return RedirectToAction("Index", "Home");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error);
-            }
-
-            return View(model);
+            ModelState.AddModelError("", "Неверный email или пароль");
+            return View(loginViewModel);
         }
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity),
+            new AuthenticationProperties
+            {
+                IsPersistent = loginViewModel.RememberMe 
+            });
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        Response.Cookies.Delete("AccessToken");
+        Response.Cookies.Delete("RefreshToken");
+    
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("Login");
     }
 }

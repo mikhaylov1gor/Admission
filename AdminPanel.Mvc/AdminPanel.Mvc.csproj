@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Contract.Domain\Contract.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.11.0" />
+    </ItemGroup>
+
 </Project>

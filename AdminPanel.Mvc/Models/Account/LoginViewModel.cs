@@ -15,4 +15,7 @@ public class LoginViewModel
     [MinLength(6, ErrorMessage = "Минимальная длина 6 символов")]
     [MaxLength(25, ErrorMessage = "Максимальная длина 25 символов")]
     public string Password { get; set; }
+    
+    [Display(Name = "Запомнить меня")]
+    public bool RememberMe { get; set; }
 }
