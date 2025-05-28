@@ -24,19 +24,19 @@ public class AccountController : Controller
     public IActionResult Login() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel loginViewModel)
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            return View(loginViewModel);
+            return View(model);
         }
 
-        var identity = await _authService.Login(loginViewModel);
+        var identity = await _authService.Login(model);
         
         if (identity == null)
         {
             ModelState.AddModelError("", "Неверный email или пароль");
-            return View(loginViewModel);
+            return View(model);
         }
 
         await HttpContext.SignInAsync(
@@ -44,7 +44,7 @@ public class AccountController : Controller
             new ClaimsPrincipal(identity),
             new AuthenticationProperties
             {
-                IsPersistent = loginViewModel.RememberMe 
+                IsPersistent = model.RememberMe 
             });
 
         return RedirectToAction("Index", "Home");

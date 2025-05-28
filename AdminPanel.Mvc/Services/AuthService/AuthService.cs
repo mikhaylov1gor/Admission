@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AdminPanel.Mvc.Models.Account;
+using AdminPanel.Mvc.Models.Dtos;
 using AdminPanel.Mvc.Services.AuthService;
 using AdminPanel.Mvc.Services.UserServiceClient;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -77,5 +78,32 @@ public class AuthService : IAuthService
 
         SetTokensInCookies(response.accessToken, response.refreshToken, true);
         return true;
+    }
+    
+    public async Task<ChangePasswordResult> ChangePassword(string currentPassword, string newPassword)
+    {
+        try
+        {
+            var response = await _userServiceClient.ChangePassword(currentPassword, newPassword);
+        
+            if (!response.Success)
+            {
+                return new ChangePasswordResult
+                {
+                    Success = false,
+                    ErrorMessage = "Не удалось изменить пароль"
+                };
+            }
+
+            return new ChangePasswordResult { Success = true };
+        }
+        catch (Exception ex)
+        {
+            return new ChangePasswordResult
+            {
+                Success = false,
+                ErrorMessage = "Ошибка при обращении к серверу"
+            };
+        }
     }
 }

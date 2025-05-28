@@ -9,13 +9,13 @@ namespace UserService.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ApplicantController : ControllerBase
+public class UserController : ControllerBase
 {
     private readonly IApplicantService _applicantService;
     private readonly IAuthService _authService;
     private readonly IUserContextService _userContextService;
 
-    public ApplicantController(
+    public UserController(
         IApplicantService applicantService,
         IAuthService authService,
         IUserContextService userContextService)
@@ -65,7 +65,7 @@ public class ApplicantController : ControllerBase
     }
 
     [HttpGet("profile")]
-    [Authorize]
+    [Authorize(Roles = "Applicant")]
     public async Task<IActionResult> GetProfile()
     {
         var userId = _userContextService.GetCurrentUserId(); 
@@ -74,7 +74,7 @@ public class ApplicantController : ControllerBase
     }
 
     [HttpPut("profile")]
-    [Authorize]
+    [Authorize(Roles = "Applicant")]
     public async Task<IActionResult> EditProfile(EditUserDto dto)
     {
         var userId = _userContextService.GetCurrentUserId(); 
