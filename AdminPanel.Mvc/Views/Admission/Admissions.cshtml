@@ -1,0 +1,234 @@
+@model AdminPanel.Mvc.Models.Admissions.AdmissionsViewModel
+@using Contract.Domain.Enums
+
+@{
+    ViewData["Title"] = "Поступления";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">@ViewData["Title"]</h1>
+            <hr />
+        </div>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Фильтры</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">Статус поступления</label>
+                    <select id="statusFilter" name="AdmissionStatus" class="form-select">
+                        <option value="">Все статусы</option>
+                        <option value="@AdmissionStatus.Created">Создано</option>
+                        <option value="@AdmissionStatus.InProgress">На рассмотрении</option>
+                        <option value="@AdmissionStatus.Rejected">Отклонено</option>
+                        <option value="@AdmissionStatus.Confirmed">Принято</option>
+                        <option value="@AdmissionStatus.Closed">Закрыто</option>
+                        
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="managerFilter" class="form-label">Наличие менеджера</label>
+                    <select id="managerFilter" name="IsManagerExists" class="form-select">
+                        <option value="">Все</option>
+                        <option value="true" selected="@Model.Filters.IsManagerExists">Есть менеджер</option>
+                        <option value="false" selected="@(Model.Filters.IsManagerExists == false)">Нет менеджера</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mt-4 pt-2">
+                        <input class="form-check-input" type="checkbox" id="onlyMineFilter" name="OnlyMine" value="true" checked="@Model.Filters.OnlyMine">
+                        <label class="form-check-label" for="onlyMineFilter">
+                            Только мои поступления
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="sortingFilter" class="form-label">Сортировка</label>
+                    <select id="sortingFilter" name="Sorting" class="form-select">
+                        <option value="@Sorting.ModifiedDesc" selected="@(Model.Filters.Sorting == Sorting.ModifiedDesc)">По дате изменения (сначала новые)</option>
+                        <option value="@Sorting.ModifiedAsc" selected="@(Model.Filters.Sorting == Sorting.ModifiedAsc)">По дате изменения (сначала старые)</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel"></i> Применить фильтры
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Таблица поступлений -->
+    <div class="card">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Список поступлений</h5>
+                <div>
+                    <span class="badge bg-secondary">Всего: @Model.Admissions.StudentAdmissions.Count()</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            @if (!Model.Admissions.StudentAdmissions.Any())
+            {
+                <div class="alert alert-info m-4">По вашим фильтрам поступлений не найдено.</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>ID поступления</th>
+                            <th>ID абитуриента</th>
+                            <th>Статус</th>
+                            <th>Назначенный менеджер</th>
+                            <th>Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var admission in Model.Admissions.StudentAdmissions)
+                        {
+                            <tr style="cursor: pointer;" onclick="goToDetails('@admission.AdmissionId')">
+
+                            <td>@admission.AdmissionId.ToString("N")</td>
+                                <td>@admission.ApplicantId.ToString("N")</td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(admission.Status)">
+                                        @admission.Status
+                                    </span>
+                                    @if (admission.IsMine)
+                                    {
+                                        <span class="badge bg-info ms-1">Мое</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (admission.IsManagerExists)
+                                    {
+                                        <span class="text-success">Есть</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger">Отсутствует</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        @if (admission.IsMine)
+                                        {
+                                            <button class="btn btn-outline-danger" data-admission-id="@admission.AdmissionId" data-applicant-id="@admission.ApplicantId" onclick="handleAction(this, 'refuse'); event.stopPropagation();">
+                                                <i class="bi bi-x-circle"></i> Отказаться
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-outline-success" data-admission-id="@admission.AdmissionId" data-applicant-id="@admission.ApplicantId" onclick="handleAction(this, 'take'); event.stopPropagation();">
+                                                <i class="bi bi-check-circle"></i> Взять
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <!-- Пагинация -->
+        @if (Model.Admissions.Pagination.Count > 0)
+        {
+            <div class="card-footer">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        @if (Model.Admissions.Pagination.Current > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link"
+                                   asp-action="Admissions"
+                                   asp-route-page="@(Model.Admissions.Pagination.Current - 1)"
+                                   asp-route-size="@Model.Admissions.Pagination.Size">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = 1; i <= (Model.Admissions.Pagination.Count / Model.Admissions.Pagination.Size) + 1; i++)
+                        {
+                            <li class="page-item @(i == Model.Admissions.Pagination.Current ? "active" : "")">
+                                <a class="page-link"
+                                   asp-action="Admissions"
+                                   asp-route-page="@i"
+                                   asp-route-size="@Model.Admissions.Pagination.Size">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        @if (Model.Admissions.Pagination.Current < (Model.Admissions.Pagination.Count / Model.Admissions.Pagination.Size) + 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link"
+                                   asp-action="Admissions"
+                                   asp-route-page="@(Model.Admissions.Pagination.Current + 1)"
+                                   asp-route-size="@Model.Admissions.Pagination.Size">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(AdmissionStatus status)
+    {
+        return status switch
+        {
+            AdmissionStatus.Created => "bg-primary",
+            AdmissionStatus.InProgress => "bg-warning text-dark",
+            AdmissionStatus.Confirmed => "bg-success",
+            AdmissionStatus.Rejected => "bg-danger",
+            AdmissionStatus.Closed => "bg-secondary",
+            _ => "bg-light text-dark"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+    function handleAction(button, actionType) {
+        const admissionId = button.getAttribute("data-admission-id");
+        const applicantId = button.getAttribute("data-applicant-id");
+
+        fetch(`/Admission/TakeUntakeAdmission?admissionId=${admissionId}&applicantId=${applicantId}`, {
+            method: 'PATCH',
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Ошибка при выполнении действия');
+            }
+        });
+    }
+
+    function goToDetails(admissionId) {
+        window.location.href = `/Admission/Details/${admissionId}`;
+    }
+</script>
+}

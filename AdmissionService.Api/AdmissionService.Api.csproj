@@ -21,6 +21,7 @@
       <ProjectReference Include="..\AdmissionService.Infrastructure\AdmissionService.Infrastructure.csproj" />
       <ProjectReference Include="..\Contract.Api\Contract.Api.csproj" />
       <ProjectReference Include="..\Contract.Application\Contract.Application.csproj" />
+      <ProjectReference Include="..\Contract.Dtos\Contract.Dtos.csproj" />
     </ItemGroup>
 
 </Project>

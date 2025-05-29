@@ -1,8 +1,10 @@
-﻿using AdmissionService.Application.Dtos.Requests;
+﻿using System.Security.Claims;
+using AdmissionService.Application.Dtos.Requests;
 using AdmissionService.Application.Services.AdmissionService;
 using AdmissionService.Application.Services.DictionaryServiceClient;
 using AdmissionService.Application.Services.ProgramService;
 using Contract.Api.Controller;
+using Contract.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,11 +44,14 @@ public class AdmissionController : BaseController
         return Ok(response);
     }
 
-    [Authorize(Roles = "Applicant")]
+    [Authorize(Roles = "Applicant, Manager, SeniorManager, Administrator")]
     [HttpGet("Admission/{admissionId}")]
     public async Task<IActionResult> GetAdmissionById(Guid admissionId)
     {
-        var response = await _admissionService.GetAdmissionById(admissionId, UserId);
+        var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        var isWorker = userRole == Role.Administrator.ToString() || userRole == Role.Manager.ToString() || userRole == Role.SeniorManager.ToString(); 
+        
+        var response = await _admissionService.GetAdmissionById(admissionId, UserId, isWorker);
         return Ok(response);
     }
 

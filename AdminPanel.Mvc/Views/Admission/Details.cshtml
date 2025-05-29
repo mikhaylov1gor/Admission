@@ -1,0 +1,77 @@
+﻿@model AdmissionService.Application.Dtos.Responses.StudentAdmissionDto
+@using System.Globalization
+
+@if (Model == null)
+{
+    <div class="alert alert-danger">
+        Данные не найдены
+    </div>
+    return;
+}
+
+<div class="container mt-4">
+    <h2>Заявление на поступление</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Основная информация</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>ID заявления:</strong> @Model.Id</p>
+                    <p><strong>Статус:</strong> <span class="badge bg-primary">@Model?.Status</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Дата создания:</strong> @Model.CreatedTime.ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture)</p>
+                    <p><strong>Последнее изменение:</strong> @Model.ModifiedTime?.ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture)</p>
+                </div>
+            </div>
+            @if (Model?.IsManagerExist ?? false)
+            {
+                <div class="alert alert-info mt-3">
+                    За этим заявлением закреплен менеджер
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4>Выбранные программы</h4>
+        </div>
+        <div class="card-body">
+            @if (Model?.AdmissionPrograms?.Any() ?? false)
+            {
+                <div class="list-group">
+                    @foreach (var program in Model.AdmissionPrograms.OrderBy(p => p.Priority))
+                    {
+                        <div class="list-group-item mb-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@program.EducationProgram.Name</h5>
+                                <span class="badge bg-secondary">Приоритет: @program.Priority</span>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Код программы:</strong> @program.EducationProgram.Code</p>
+                                    <p class="mb-1"><strong>Язык обучения:</strong> @program.EducationProgram.Language</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Форма обучения:</strong> @program.EducationProgram.EducationForm</p>
+                                    <p class="mb-1"><strong>Уровень:</strong> @program.EducationProgram.EducationLevel.Name</p>
+                                </div>
+                            </div>
+                            <p class="mt-2 mb-1"><strong>Факультет:</strong> @program.EducationProgram.Faculty.Name</p>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    Нет выбранных программ обучения
+                </div>
+            }
+        </div>
+    </div>
+</div>

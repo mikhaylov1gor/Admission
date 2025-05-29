@@ -7,7 +7,7 @@ public interface IStudentAdmissionRepository
     Task<bool> IsStudentAdmissionExists(Guid applicantId);
     Task AddStudentAdmissionAsync(StudentAdmission studentAdmission);
     Task<StudentAdmission?> GetCurrentStudentAdmissionAsync(Guid applicantId);
-    Task<StudentAdmission?> GetStudentAdmissionByIdAsync(Guid studentAdmissionId, Guid userId);
+    Task<StudentAdmission?> GetStudentAdmissionByIdAsync(Guid studentAdmissionId, Guid userId, bool isWorker);
     Task DeleteStudentAdmissionProgramByIdAsync(Guid studentAdmissionId, Guid programId);
     Task UpdateAdmissionProgram(AdmissionProgram program);
     
@@ -15,5 +15,7 @@ public interface IStudentAdmissionRepository
     
     Task AddAdmissionProgramAsync(AdmissionProgram program);
     Task SaveChangesAsync();
-    
+
+    Task<List<StudentAdmission>> GetAllAdmissions();
+
 }

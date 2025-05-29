@@ -1,5 +1,6 @@
 ﻿using Contract.Application.Common;
 using Contract.Application.Exceptions;
+using Contract.Domain.Enums;
 using UserService.Application.Dtos.Requests;
 using UserService.Application.Dtos.Responses;
 using UserService.Application.Interfaces;
@@ -97,5 +98,17 @@ public class ApplicantService : IApplicantService
         await _applicantRepository.SaveChangesAsync();
         
         return Result.Success();
+    }
+
+    public async Task<Role> GetRoleByUserId(Guid userId)
+    {
+        var userDb = await _userRepository.GetByIdAsync(userId);
+        
+        if (userDb == null)
+        {
+            throw new NotFoundException("User not found.");
+        }
+    
+        return userDb.Role;
     }
 }

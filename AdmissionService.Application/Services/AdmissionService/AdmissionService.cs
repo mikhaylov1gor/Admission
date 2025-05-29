@@ -4,6 +4,9 @@ using AdmissionService.Domain.Entities;
 using AdmissionService.Domain.IRepositories;
 using Contract.Application.Exceptions;
 using Contract.Domain.Enums;
+using Contract.Dtos.Dtos.Requests;
+using Contract.Dtos.Dtos.Responses;
+using StudentAdmissionDto = AdmissionService.Application.Dtos.Responses.StudentAdmissionDto;
 
 namespace AdmissionService.Application.Services.AdmissionService;
 
@@ -72,15 +75,15 @@ public class AdmissionService : IAdmissionService
         return admissionsDto;
     }
 
-    public async Task<StudentAdmissionDto> GetAdmissionById(Guid admissionId, Guid userId)
+    public async Task<StudentAdmissionDto> GetAdmissionById(Guid admissionId, Guid userId, bool isWorker)
     {
-        var existingAdmission = await _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, userId);
+        var existingAdmission = await _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, userId, isWorker);
         if (existingAdmission == null)
         {
             throw new NotFoundException("Admission not found or not created yet");
         }
 
-        var programs = await loadPrograms(existingAdmission);
+        var programs = await LoadPrograms(existingAdmission);
         var studentAdmissionDto = new StudentAdmissionDto
         {
             Id = existingAdmission.Id,
@@ -98,8 +101,100 @@ public class AdmissionService : IAdmissionService
     {
         return await _admissionSettingRepository.IsAdmissionOpenAsync();
     }
+    
+    public async Task<AdmissionsDto> GetAdmissions(GetAdmissionsDto dto, Guid workerId)
+    {
+        var allAdmissions = await _studentAdmissionRepository.GetAllAdmissions();
+        
+        if (dto.IsManagerExists == true)
+        {
+            allAdmissions = allAdmissions.Where(a => a.ManagerId != null).ToList();
+        }
 
-    private async Task<List<AdmissionProgramDto>> loadPrograms(StudentAdmission admission)
+        if (dto.AdmissionStatus != null)
+        {
+            allAdmissions = allAdmissions.Where(a => a.Status == dto.AdmissionStatus).ToList();
+        }
+
+        if (dto.OnlyMine)
+        {
+            allAdmissions = allAdmissions.Where(a => a.ManagerId == workerId).ToList();
+        }
+
+        switch (dto.Sorting)
+        {
+            case Sorting.ModifiedAsc:
+                allAdmissions = allAdmissions.OrderBy(a => a.ModifiedTime).ToList();
+                break;
+            
+            case Sorting.ModifiedDesc:
+                allAdmissions = allAdmissions.OrderByDescending(a => a.ModifiedTime).ToList();
+                break;
+        }
+        
+        
+        var pagesCount = (int)Math.Ceiling((double)allAdmissions.Count() / dto.Size);
+        allAdmissions = allAdmissions
+            .Skip((dto.Page - 1) * dto.Size)
+            .Take(dto.Size)
+            .ToList();
+
+        var admissionsDto = new List<AdmissionDto>();
+        
+        admissionsDto = allAdmissions
+            .Select(aa => new AdmissionDto
+            {
+                AdmissionId = aa.Id,
+                Status = aa.Status,
+                ApplicantId = aa.ApplicantId,
+                IsManagerExists = (aa.ManagerId != null),
+                ManagerId = aa.ManagerId,
+                IsMine = (aa.ManagerId == workerId),
+                IsEditable = aa.Status != AdmissionStatus.Closed && aa.ManagerId == workerId
+            })
+            .ToList();
+
+        var pagination = new Pagination
+        {
+            Current = dto.Page,
+            Size = dto.Size,
+            Count = pagesCount,
+        };
+        
+        return new AdmissionsDto{Pagination = pagination, StudentAdmissions =  admissionsDto};
+    }
+
+    public async Task TakeUntakeAdmission(Guid admissionId, Guid workerId, Guid userId)
+    {
+        var studentAdmission = await _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, userId, true);
+
+        if (studentAdmission == null)
+        {
+            throw new NotFoundException("Admission not found or not created yet");
+        }
+
+        if (studentAdmission.ManagerId != null && studentAdmission.ManagerId != workerId)
+        {
+            throw new ForbiddenAccessException("This admission already taken by another manager");
+        }
+
+        if (studentAdmission.ManagerId == workerId)
+        {
+            studentAdmission.ManagerId = null;
+            studentAdmission.Status = AdmissionStatus.Created;
+        }
+        else
+        {
+            studentAdmission.ManagerId = workerId;
+            studentAdmission.Status = AdmissionStatus.InProgress;
+        }
+    
+        studentAdmission.ModifiedTime = DateTime.UtcNow;
+
+        await _studentAdmissionRepository.SaveChangesAsync();
+    }
+
+    private async Task<List<AdmissionProgramDto>> LoadPrograms(StudentAdmission admission)
     {
         var programs = new List<AdmissionProgramDto>();
 
@@ -125,6 +220,5 @@ public class AdmissionService : IAdmissionService
         
         return programs;
     }
-    
     
 }

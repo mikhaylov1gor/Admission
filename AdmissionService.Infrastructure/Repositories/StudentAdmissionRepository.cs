@@ -39,11 +39,11 @@ public class StudentAdmissionRepository : IStudentAdmissionRepository
         return studentAdmission;
     }
 
-    public async Task<StudentAdmission?> GetStudentAdmissionByIdAsync(Guid studentAdmissionId, Guid userId)
+    public async Task<StudentAdmission?> GetStudentAdmissionByIdAsync(Guid studentAdmissionId, Guid userId, bool isWorker)
     {
         return await _context.StudentAdmissions
             .Include(sa => sa.AdmissionPrograms)
-            .FirstOrDefaultAsync(sa => sa.ApplicantId == userId && sa.Id == studentAdmissionId);
+            .FirstOrDefaultAsync(sa => (sa.ApplicantId == userId && sa.Id == studentAdmissionId) || (isWorker && sa.Id == studentAdmissionId));
     }
 
     public async Task DeleteStudentAdmissionProgramByIdAsync(Guid studentAdmissionId, Guid programId)
@@ -84,6 +84,13 @@ public class StudentAdmissionRepository : IStudentAdmissionRepository
     public async Task AddAdmissionProgramAsync(AdmissionProgram program)
     {
         await _context.AdmissionPrograms.AddAsync(program);
+    }
+
+    public async Task<List<StudentAdmission>> GetAllAdmissions()
+    {
+        return await _context.StudentAdmissions
+            .Include(sa => sa.AdmissionPrograms)
+            .ToListAsync();
     }
 
     public async Task SaveChangesAsync()

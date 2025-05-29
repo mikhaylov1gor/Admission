@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\AdmissionService.Application\AdmissionService.Application.csproj" />
       <ProjectReference Include="..\Contract.Domain\Contract.Domain.csproj" />
+      <ProjectReference Include="..\Contract.Dtos\Contract.Dtos.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -68,6 +68,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateway", "ApiGateway", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway.ApiGateway", "ApiGateway.ApiGateway\ApiGateway.ApiGateway.csproj", "{E032B311-77EC-43B2-A72C-AA42E6500898}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contract.Dtos", "Contract.Dtos\Contract.Dtos.csproj", "{AFA72604-F79F-44F9-A967-939D6A94C35B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,7 @@ Global
 		{1CBFF854-028A-407D-AC37-D16AE2C0C81B} = {BDEEB593-B0BB-4192-B0CB-B57F01E0D0F0}
 		{160F2F4A-DF1D-4587-A997-D0D6F60F36F3} = {382B16EE-2220-4890-BA1C-849A753124B8}
 		{E032B311-77EC-43B2-A72C-AA42E6500898} = {75204634-9B48-4FD9-9DD4-BAA1F2BCFAE0}
+		{AFA72604-F79F-44F9-A967-939D6A94C35B} = {382B16EE-2220-4890-BA1C-849A753124B8}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{EEEAEB32-E95F-43D7-8F6A-BF1F2CEC006F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -206,5 +209,9 @@ Global
 		{E032B311-77EC-43B2-A72C-AA42E6500898}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E032B311-77EC-43B2-A72C-AA42E6500898}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E032B311-77EC-43B2-A72C-AA42E6500898}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFA72604-F79F-44F9-A967-939D6A94C35B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFA72604-F79F-44F9-A967-939D6A94C35B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFA72604-F79F-44F9-A967-939D6A94C35B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFA72604-F79F-44F9-A967-939D6A94C35B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

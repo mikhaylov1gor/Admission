@@ -9,9 +9,11 @@
     <ItemGroup>
       <ProjectReference Include="..\AdmissionService.Domain\AdmissionService.Domain.csproj" />
       <ProjectReference Include="..\Contract.Application\Contract.Application.csproj" />
+      <ProjectReference Include="..\Contract.Dtos\Contract.Dtos.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
     </ItemGroup>
 

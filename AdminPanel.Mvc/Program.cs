@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using AdminPanel.Mvc.Middlewaries;
+using AdminPanel.Mvc.Services.AdmissionServiceClient;
 using AdminPanel.Mvc.Services.AuthService;
 using AdminPanel.Mvc.Services.UserServiceClient;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -7,14 +9,22 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
+// json deserialize
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 // Add services to the container.
 services.AddControllersWithViews();
 
 builder.Services.AddHttpContextAccessor();
 
 // injections of services
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserServiceClient, UserServiceClient>();
+services.AddScoped<IAuthService, AuthService>();
+services.AddScoped<IUserServiceClient, UserServiceClient>();
+services.AddScoped<IAdmissionServiceClient,AdmissionServiceClient>();
 
 // injections of external http services
 services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -28,6 +38,11 @@ services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 services.AddHttpClient<IUserServiceClient, UserServiceClient>(client => 
 {
     client.BaseAddress = new Uri("http://localhost:5003");
+});
+
+services.AddHttpClient<IAdmissionServiceClient, AdmissionServiceClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5004");
 });
 
 services.AddDistributedMemoryCache();
