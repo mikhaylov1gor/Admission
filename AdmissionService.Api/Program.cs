@@ -6,6 +6,7 @@ using AdmissionService.Application.Services.AdmissionService;
 using AdmissionService.Application.Services.DictionaryServiceClient;
 using AdmissionService.Application.Services.DocumentServiceClient;
 using AdmissionService.Application.Services.ProgramService;
+using AdmissionService.Application.Services.UserServiceClient;
 using AdmissionService.Domain.IRepositories;
 using AdmissionService.Infrastructure.Persistence;
 using AdmissionService.Infrastructure.Repositories;
@@ -13,6 +14,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NotificationService.Api.Services.EmailPublisherService;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,12 +87,19 @@ services.AddScoped<IAdmissionSettingRepository, AdmissionSettingsRepository>();
 // injections of services
 services.AddScoped<IAdmissionService, AdmissionService.Application.Services.AdmissionService.AdmissionService>();
 services.AddScoped<IProgramService, ProgramService>();
+services.AddSingleton<IEmailPublisher, EmailPublisherService>();
 
 // injections of external http services
 services.AddHttpClient<IDictionaryServiceClient,DictionaryServiceClient>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5000");
 });
+
+services.AddHttpClient<IUserServiceClient,UserServiceClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5003");
+});
+
 
 // injections of external http services
 services.AddHttpClient<IDocumentServiceClient,DocumentServiceClient>(client =>
@@ -105,6 +115,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
 
 // injections of middlewarries
 app.UseMiddleware<ExceptionHandlingMiddleware>();

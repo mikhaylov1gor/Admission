@@ -27,6 +27,14 @@ public class AdminController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("User/{userId}/Email")]
+    [Authorize(Roles = "Administrator, Manager, SeniorManager")]
+    public async Task<IActionResult> getUserEmail(Guid userId)
+    {
+        var response = await _applicantService.GetEmailByUserId(userId);
+        return Ok(response);
+    }
+
     [HttpGet("Applicants")]
     [Authorize(Roles = "Administrator, Manager, SeniorManager")]
     public async Task<IActionResult> GetApplicants()

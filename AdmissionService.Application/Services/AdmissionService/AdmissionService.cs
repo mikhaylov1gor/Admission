@@ -1,11 +1,14 @@
 ﻿using AdmissionService.Application.Dtos.Responses;
 using AdmissionService.Application.Services.DictionaryServiceClient;
+using AdmissionService.Application.Services.UserServiceClient;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Domain.IRepositories;
 using Contract.Application.Exceptions;
 using Contract.Domain.Enums;
 using Contract.Dtos.Dtos.Requests;
 using Contract.Dtos.Dtos.Responses;
+using NotificationService.Api.Models;
+using NotificationService.Api.Services.EmailPublisherService;
 using StudentAdmissionDto = AdmissionService.Application.Dtos.Responses.StudentAdmissionDto;
 
 namespace AdmissionService.Application.Services.AdmissionService;
@@ -15,14 +18,20 @@ public class AdmissionService : IAdmissionService
     private readonly IAdmissionSettingRepository _admissionSettingRepository;
     private readonly IStudentAdmissionRepository _studentAdmissionRepository; 
     private readonly IDictionaryServiceClient _dictionaryServiceClient;
+    private readonly IUserServiceClient _userServiceClient;
+    private readonly IEmailPublisher _emailPublisher;
     public AdmissionService(
         IAdmissionSettingRepository admissionSettingRepository,
         IStudentAdmissionRepository studentAdmissionRepository,
-        IDictionaryServiceClient dictionaryServiceClient)
+        IDictionaryServiceClient dictionaryServiceClient,
+        IUserServiceClient userServiceClient,
+        IEmailPublisher emailPublisher)
     {
         _admissionSettingRepository = admissionSettingRepository;
         _studentAdmissionRepository = studentAdmissionRepository;
         _dictionaryServiceClient = dictionaryServiceClient;
+        _userServiceClient = userServiceClient;
+        _emailPublisher = emailPublisher;
     }
 
     public async Task<Guid> CreateAdmission(Guid userId)
@@ -192,6 +201,13 @@ public class AdmissionService : IAdmissionService
         studentAdmission.ModifiedTime = DateTime.UtcNow;
 
         await _studentAdmissionRepository.SaveChangesAsync();
+        
+        // sending email
+        await SendEmailToApplicant(studentAdmission.ApplicantId, studentAdmission.Status);
+        if (studentAdmission.Status == AdmissionStatus.InProgress)
+        {
+            await SendEmailToManager(workerId);   
+        }
     }
 
     private async Task<List<AdmissionProgramDto>> LoadPrograms(StudentAdmission admission)
@@ -220,5 +236,43 @@ public class AdmissionService : IAdmissionService
         
         return programs;
     }
+
+    private async Task SendEmailToApplicant(Guid userId, AdmissionStatus newStatus)
+    {
+        var email = await _userServiceClient.GetUserEmail(userId);
+
+        Console.WriteLine($"email: {email}");
+        if (email == null)
+        {
+            email = "NotExistEmail@unlucky.com";
+        }
+        var message = new EmailMessage
+        {
+            To = email, 
+            Subject = "Изменение статуса поступления",
+            Body = $"Уведомляем Вас о том, что статус вашего заявления был изменен. Новый статус: {newStatus.ToString()}",
+            IsHtml = false
+        };
+
+        _emailPublisher.PublishMessage(message);
+    }
     
+    private async Task SendEmailToManager(Guid userId)
+    {
+        var email = await _userServiceClient.GetUserEmail(userId);
+
+        if (email == null)
+        {
+            email = "NotExistEmail@unlucky.com";
+        }
+        var message = new EmailMessage
+        {
+            To = email, 
+            Subject = "Вам было назначено поступление",
+            Body = $"Уведомляем Вас о том, что вам было назначено новое поступление",
+            IsHtml = false
+        };
+
+        _emailPublisher.PublishMessage(message);
+    }
 }

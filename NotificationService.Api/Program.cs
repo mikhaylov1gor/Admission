@@ -1,9 +1,18 @@
-var builder = WebApplication.CreateBuilder(args);
+using NotificationService.Api.Models;
+using NotificationService.Api.Services;
+using NotificationService.Api.Services.EmailPublisherService;
+using NotificationService.Api.Services.EmailService;
+using NotificationService.Api.Services.MessageConsumerService;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+
+// services
+services.AddSingleton<IEmailService, EmailService>();
+services.AddSingleton<IEmailPublisher, EmailPublisherService>();
+services.AddHostedService<MessageConsumer>();
 
 var app = builder.Build();
 
@@ -16,29 +25,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+// endpoint for send notifications
+app.MapPost("/api/notifications/email", async (EmailMessage message, IEmailPublisher publisher) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+    publisher.PublishMessage(message);
+    return Results.Ok();
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

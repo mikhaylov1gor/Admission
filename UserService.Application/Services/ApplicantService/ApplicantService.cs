@@ -113,6 +113,18 @@ public class ApplicantService : IApplicantService
         return userDb.Role;
     }
 
+    public async Task<string> GetEmailByUserId(Guid userId)
+    {
+        var userDb = await _userRepository.GetByIdAsync(userId);
+        
+        if (userDb == null)
+        {
+            throw new NotFoundException("User not found.");
+        }
+        
+        return userDb.Email;
+    }
+
     public async Task<List<ApplicantDto>> GetAllApplicants()
     {
         var applicants = await _userRepository.GetAllApplicants();
