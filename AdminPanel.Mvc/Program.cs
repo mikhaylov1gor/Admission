@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using AdminPanel.Mvc.Middlewaries;
 using AdminPanel.Mvc.Services.AdmissionServiceClient;
 using AdminPanel.Mvc.Services.AuthService;
+using AdminPanel.Mvc.Services.DocumentServiceClient;
 using AdminPanel.Mvc.Services.UserServiceClient;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -25,6 +26,7 @@ builder.Services.AddHttpContextAccessor();
 services.AddScoped<IAuthService, AuthService>();
 services.AddScoped<IUserServiceClient, UserServiceClient>();
 services.AddScoped<IAdmissionServiceClient,AdmissionServiceClient>();
+services.AddScoped<IDocumentServiceClient,DocumentServiceClient>();
 
 // injections of external http services
 services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -43,6 +45,11 @@ services.AddHttpClient<IUserServiceClient, UserServiceClient>(client =>
 services.AddHttpClient<IAdmissionServiceClient, AdmissionServiceClient>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5004");
+});
+
+services.AddHttpClient<IDocumentServiceClient, DocumentServiceClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5001");
 });
 
 services.AddDistributedMemoryCache();

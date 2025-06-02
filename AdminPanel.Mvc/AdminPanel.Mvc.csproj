@@ -10,6 +10,8 @@
       <ProjectReference Include="..\AdmissionService.Application\AdmissionService.Application.csproj" />
       <ProjectReference Include="..\Contract.Domain\Contract.Domain.csproj" />
       <ProjectReference Include="..\Contract.Dtos\Contract.Dtos.csproj" />
+      <ProjectReference Include="..\DocumentService.Application\DocumentService.Application.csproj" />
+      <ProjectReference Include="..\UserService.Application\UserService.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>

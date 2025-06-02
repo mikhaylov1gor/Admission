@@ -37,4 +37,13 @@ public class ManagerRepository : IManagerRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteAsync(Guid managerId)
+    {
+        var manager =await _context.Managers.FindAsync(managerId);
+        if (manager != null)
+        {
+            _context.Remove(manager);
+        }
+    }
 }

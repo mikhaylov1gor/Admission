@@ -96,7 +96,7 @@
                         <tbody>
                         @foreach (var admission in Model.Admissions.StudentAdmissions)
                         {
-                            <tr style="cursor: pointer;" onclick="goToDetails('@admission.AdmissionId')">
+                            <tr style="cursor: pointer;" onclick="goToDetails('@admission.AdmissionId', '@admission.ApplicantId')">
 
                             <td>@admission.AdmissionId.ToString("N")</td>
                                 <td>@admission.ApplicantId.ToString("N")</td>
@@ -143,7 +143,6 @@
             }
         </div>
 
-        <!-- Пагинация -->
         @if (Model.Admissions.Pagination.Count > 0)
         {
             <div class="card-footer">
@@ -227,8 +226,8 @@
         });
     }
 
-    function goToDetails(admissionId) {
-        window.location.href = `/Admission/Details/${admissionId}`;
+    function goToDetails(admissionId, applicantId) {
+        window.location.href = `/Admission/Details/${admissionId}?applicantId=${applicantId}`;
     }
 </script>
 }

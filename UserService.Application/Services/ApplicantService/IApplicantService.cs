@@ -12,4 +12,9 @@ public interface IApplicantService
     Task<Result> ResetPassword(ResetPasswordDto dto, Guid userId);
 
     Task<Role> GetRoleByUserId(Guid userId);
+    
+    Task<List<ApplicantDto>> GetAllApplicants();
+    Task<List<ManagerDto>> GetAllManagers();
+    
+    Task AssignRoleTo(Guid userId, Role role);
 }

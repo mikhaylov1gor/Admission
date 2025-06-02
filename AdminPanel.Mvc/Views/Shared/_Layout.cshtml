@@ -42,14 +42,14 @@
                              User.IsInRole(ValidRoles.AdminRole))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Managers" asp-action="Index">Менеджеры</a>
+                                <a class="nav-link" asp-controller="Manager" asp-action="Index">Менеджеры</a>
                             </li>
                         }
 
                         @if (User.IsInRole(ValidRoles.AdminRole))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Users" asp-action="Index">Пользователи</a>
+                                <a class="nav-link" asp-controller="Applicant" asp-action="Index">Абитуриенты</a>
                             </li>
                         }
                     </ul>

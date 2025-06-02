@@ -1,0 +1,123 @@
+﻿@model AdminPanel.Mvc.Models.Applicant.ApplicantDetailsViewModel
+@{
+    ViewData["Title"] = "Данные абитуриента";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Детали абитуриента</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="@Url.Action("Index")" class="btn btn-secondary">Назад к списку</a>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header bg-primary text-white">
+            <h4>Основная информация</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>ФИО:</strong> @Model.Applicant.FullName</p>
+                    <p><strong>Email:</strong> @Model.Applicant.Email</p>
+                    <p><strong>Телефон:</strong> @(Model.Applicant.PhoneNumber ?? "-")</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Дата рождения:</strong> @Model.Applicant.BirthDay.ToString("dd.MM.yyyy")</p>
+                    <p><strong>Пол:</strong> @Model.Applicant.Gender</p>
+                    <p><strong>Гражданство:</strong> @(Model.Applicant.Citizenship ?? "-")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Passport != null)
+    {
+        <div class="card mt-3">
+            <div class="card-header bg-info text-white">
+                <h4>Паспортные данные</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Серия:</strong> @Model.Passport.Serial</p>
+                        <p><strong>Номер:</strong> @Model.Passport.Number</p>
+                        <p><strong>Место рождения:</strong> @Model.Passport.Hometown</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Дата выдачи:</strong> @Model.Passport.WhenIssued.ToString("dd.MM.yyyy")</p>
+                        <p><strong>Кем выдан:</strong> @Model.Passport.WhoIssued</p>
+                    </div>
+                </div>
+                
+                @if (Model.Passport.Files != null && Model.Passport.Files.Any())
+                {
+                    <div class="mt-3">
+                        <h5>Файлы паспорта</h5>
+                        <ul class="list-group">
+                            @foreach (var file in Model.Passport.Files)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @file.FileName
+                                    <a href="@Url.Action("DownloadScan", "Applicant", new { scanId = file.Id, applicantId = Model.Applicant.Id })" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-download"></i> Скачать
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (Model.EducationDocument != null)
+    {
+        <div class="card mt-3">
+            <div class="card-header bg-success text-white">
+                <h4>Документ об образовании</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Название:</strong> @Model.EducationDocument.Name</p>
+                        <p><strong>Тип документа:</strong> @Model.EducationDocument.EducationDocumentType.Name</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Уровень образования:</strong> @Model.EducationDocument.EducationDocumentType.EducationLevel.Name</p>
+                    </div>
+                </div>
+                
+                @if (Model.EducationDocument.Files != null && Model.EducationDocument.Files.Any())
+                {
+                    <div class="mt-3">
+                        <h5>Файлы документа</h5>
+                        <ul class="list-group">
+                            @foreach (var file in Model.EducationDocument.Files)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @file.FileName
+                                    <a href="@Url.Action("DownloadScan", "Applicant", new { scanId = file.Id, applicantId = Model.Applicant.Id })" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-download"></i> Скачать
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if ((Model.Passport == null) && 
+         (Model.EducationDocument == null))
+    {
+        <div class="alert alert-info mt-3">
+            Нет данных о документах
+        </div>
+    }
+</div>

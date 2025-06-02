@@ -53,13 +53,20 @@ public class AdmissionController : Controller
     }
 
     [HttpGet("Admission/Details/{admissionId}")]
-    public async Task<IActionResult> Details(Guid admissionId)
+    public async Task<IActionResult> Details(Guid admissionId, [FromQuery] Guid applicantId)
     {
-        try 
+        try
         {
             var admission = await _admissionServiceClient.GetStudentAdmission(admissionId);
             
-            return View("Details", admission);
+            var viewModel = new AdmissionDetailsViewModel
+            {
+                StudentAdmission = admission,
+                ApplicantId = applicantId
+            };
+            
+            return View(viewModel);
+
         }
         catch (Exception ex)
         {

@@ -20,6 +20,20 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(user => user.Id == id);
     }
 
+    public async Task<List<Applicant>> GetAllApplicants()
+    {
+        return await _context.Applicants
+            .Include(a => a.User)
+            .ToListAsync();
+    }
+
+    public async Task<List<Manager>> GetAllManagers()
+    {
+        return await _context.Managers
+            .Include(a => a.User)
+            .ToListAsync();
+    }
+
     public async Task<User?> GetByEmailAsync(string email)
     {
         return await _context.Users
@@ -35,4 +49,6 @@ public class UserRepository : IUserRepository
     {
         await _context.SaveChangesAsync();
     }
+    
+    
 }

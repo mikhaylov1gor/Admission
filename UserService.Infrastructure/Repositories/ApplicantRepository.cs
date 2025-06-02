@@ -44,4 +44,13 @@ public class ApplicantRepository : IApplicantRepository
     {
         await _context.SaveChangesAsync();
     }
+    
+    public async Task DeleteAsync(Guid applicantId)
+    {
+        var applicant =await _context.Applicants.FindAsync(applicantId);
+        if (applicant != null)
+        {
+            _context.Remove(applicant);
+        }
+    }
 }

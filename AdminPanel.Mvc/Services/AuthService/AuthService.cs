@@ -68,16 +68,27 @@ public class AuthService : IAuthService
 
     public async Task<bool> RefreshTokens()
     {
-        var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["RefreshToken"];
-        if (string.IsNullOrEmpty(refreshToken))
-            return false;
+        try
+        {
+            var refreshToken = _httpContextAccessor.HttpContext?.Request.Cookies["RefreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return false;
+            }
 
-        var response = await _userServiceClient.RefreshTokens(refreshToken);
-        if (string.IsNullOrEmpty(response.accessToken))
-            return false;
+            var response = await _userServiceClient.RefreshTokens(refreshToken);
+            if (response == null || string.IsNullOrEmpty(response.accessToken))
+            {
+                return false;
+            }
 
-        SetTokensInCookies(response.accessToken, response.refreshToken, true);
-        return true;
+            SetTokensInCookies(response.accessToken, response.refreshToken, true);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
     
     public async Task<ChangePasswordResult> ChangePassword(string currentPassword, string newPassword)

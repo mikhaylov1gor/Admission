@@ -8,4 +8,5 @@ public interface IManagerRepository
     Task<List<Manager>> GetAllAsync();
     Task AddAsync(Manager manager);
     Task SaveChangesAsync();
+    Task DeleteAsync(Guid managerId);
 }

@@ -1,0 +1,130 @@
+﻿@model AdminPanel.Mvc.Models.Managers.ManagersViewModel
+
+<div class="container mt-4">
+    <h2>Управление менеджерами</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+    
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    <div class="row">
+        <!-- Главные менеджеры -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Главные менеджеры</h4>
+                </div>
+                <div class="card-body">
+                    @if (!Model.SeniorManagers.Any())
+                    {
+                        <div class="alert alert-info">
+                            Нет главных менеджеров
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var manager in Model.SeniorManagers)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">@manager.FullName</h5>
+                                            <p class="mb-1 text-muted">@manager.Email</p>
+                                        </div>
+                                        @if (User.IsInRole("Administrator"))
+                                        {
+                                            <div class="dropdown">
+                                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    Изменить роль
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <form asp-controller="Manager" asp-action="AssignRole" asp-route-userId="@manager.Id" method="post">
+                                                            <input type="hidden" name="role" value="Manager" />
+                                                            <button type="submit" class="dropdown-item">Сделать менеджером</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form asp-controller="Manager" asp-action="AssignRole" asp-route-userId="@manager.Id" method="post">
+                                                            <input type="hidden" name="role" value="Applicant" />
+                                                            <button type="submit" class="dropdown-item">Сделать абитуриентом</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">Менеджеры</h4>
+                </div>
+                <div class="card-body">
+                    @if (!Model.RegularManagers.Any())
+                    {
+                        <div class="alert alert-info">
+                            Нет менеджеров
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var manager in Model.RegularManagers)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">@manager.FullName</h5>
+                                            <p class="mb-1 text-muted">@manager.Email</p>
+                                        </div>
+                                        @if (User.IsInRole("Administrator"))
+                                        {
+                                            <div class="dropdown">
+                                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    Изменить роль
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <form asp-action="AssignRole" asp-route-userId="@manager.Id" method="post">
+                                                            <input type="hidden" name="role" value="SeniorManager" />
+                                                            <button type="submit" class="dropdown-item">Сделать главным менеджером</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form asp-action="AssignRole" asp-route-userId="@manager.Id" method="post">
+                                                            <input type="hidden" name="role" value="Applicant" />
+                                                            <button type="submit" class="dropdown-item">Сделать абитуриентом</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

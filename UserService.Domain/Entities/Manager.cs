@@ -6,4 +6,5 @@ public class Manager
     public User User { get; set; }
     
     public string FullName { get; set; }
+    
 }
