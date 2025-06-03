@@ -1,7 +1,11 @@
 ﻿@model AdminPanel.Mvc.Models.Managers.ManagersViewModel
 
+@{
+    ViewData["Title"] = "Управление менеджерами";
+}
+
 <div class="container mt-4">
-    <h2>Управление менеджерами</h2>
+    <h2>@ViewData["Title"]</h2>
 
     @if (TempData["Error"] != null)
     {

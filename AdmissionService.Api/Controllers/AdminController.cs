@@ -1,5 +1,7 @@
-﻿using AdmissionService.Application.Services.AdmissionService;
+﻿using System.Security.Claims;
+using AdmissionService.Application.Services.AdmissionService;
 using Contract.Api.Controller;
+using Contract.Domain.Enums;
 using Contract.Dtos.Dtos.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +32,31 @@ public class AdminController : BaseController
     public async Task<IActionResult> TakeUntakeAdmission(Guid admissionId, Guid applicantId)
     {
         await _admissionService.TakeUntakeAdmission(admissionId, UserId, applicantId);
+        return Ok();
+    }
+
+    [HttpGet("Admission/{admissionId}/IsMine")]
+    [Authorize(Roles = "Administrator, Manager, SeniorManager")]
+    public async Task<IActionResult> IsMineAdmission(Guid admissionId)
+    {
+        var role = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+    
+        if (role == "Administrator" || role == "SeniorManager")
+            return Ok(true);
+        
+        var response = await _admissionService.IsMine(admissionId, UserId);
+        return Ok(response);
+    }
+
+    [HttpPut("Admission/{admissionId}/ChangeStatus")]
+    [Authorize(Roles = "Administrator, Manager, SeniorManager")]
+    public async Task<IActionResult> ChangeStatusAdmission(Guid admissionId, [FromQuery] AdmissionStatus status)
+    {
+        var role = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+        
+        var isGigaWorker = role == "Administrator" || role == "SeniorManager";
+        
+        await _admissionService.ChangeAdmissionStatus(admissionId, status, UserId, isGigaWorker);
         return Ok();
     }
 }

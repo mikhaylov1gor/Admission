@@ -66,4 +66,16 @@ public class AdminController : ControllerBase
         var response = await _applicantService.GetProfile(applicantId);
         return Ok(response.Value);
     }
+
+    /*[HttpGet("Applicant/{applicantId}/IsMine")]
+    [Authorize(Roles = "Administrator, Manager, SeniorManager")]
+    public async Task<IActionResult> IsMineApplicant(Guid applicantId)
+    {
+        var role = ClaimsPrincipal.Current.FindFirst(ClaimTypes.Role).Value;
+        if (role == "SeniorManager" || role == "Administrator")
+            return Ok(true);
+        
+        var managerId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var response = await _applicantService.IsMineApplicant(applicantId, managerId);
+    }*/
 }

@@ -1,5 +1,11 @@
 ﻿@model AdminPanel.Mvc.Models.Admissions.AdmissionDetailsViewModel
 @using System.Globalization
+@using Contract.Domain.Enums
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Детали поступления";
+}
 
 @if (Model == null)
 {
@@ -11,7 +17,7 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Заявление на поступление</h2>
+        <h2>@ViewData["Title"]</h2>
         @if (Model.ApplicantId != Guid.Empty)
         {
             <a asp-controller="Applicant"
@@ -37,17 +43,43 @@
             <div class="row">
                 <div class="col-md-6">
                     <p><strong>ID заявления:</strong> @Model.StudentAdmission.Id</p>
-                    <p><strong>Статус:</strong> <span class="badge bg-primary">@Model?.StudentAdmission.Status</span></p>
+                    <p>
+                        <strong>Статус:</strong>
+                        @if (Model.IsMine)
+                        {
+                        <form asp-action="ChangeStatus" asp-controller="Admission" method="post" class="d-inline">
+                            <input type="hidden" name="admissionId" value="@Model.StudentAdmission.Id" />
+                            <select name="newStatus"
+                                    class="form-select form-select-sm d-inline w-auto"
+                                    onchange="this.form.submit()">
+                                @foreach (var status in Enum.GetValues(typeof(AdmissionStatus)))
+                                {
+                                    @if (status.ToString() != "Created")
+                                    {
+                                        <option value="@status"
+                                                selected="@(status.ToString() == Model.StudentAdmission.Status.ToString())">
+                                            @status
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="badge bg-primary">@Model?.StudentAdmission.Status</span>
+                    }
+                    </p>
                 </div>
                 <div class="col-md-6">
                     <p><strong>Дата создания:</strong> @Model.StudentAdmission.CreatedTime.ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture)</p>
                     <p><strong>Последнее изменение:</strong> @Model.StudentAdmission.ModifiedTime?.ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture)</p>
                 </div>
             </div>
-            @if (Model?.StudentAdmission.IsManagerExist ?? false)
+            @if (Model.IsMine)
             {
                 <div class="alert alert-info mt-3">
-                    За этим заявлением закреплен менеджер
+                    Вы можете редактировать это заявление
                 </div>
             }
         </div>
@@ -92,3 +124,12 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @if (TempData["StatusChanged"] != null)
+    {
+        <script>
+            toastr.success('Статус успешно изменён');
+        </script>
+    }
+}

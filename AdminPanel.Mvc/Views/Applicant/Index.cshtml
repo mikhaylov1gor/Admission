@@ -1,7 +1,11 @@
 ﻿@model AdminPanel.Mvc.Models.Applicant.ApplicantViewModel
 
+@{
+    ViewData["Title"] = "Список абитуриентов";
+}
+
 <div class="container mt-4">
-    <h2>Список абитуриентов</h2>
+    <h2>@ViewData["Title"]</h2>
 
     @if (TempData["Error"] != null)
     {

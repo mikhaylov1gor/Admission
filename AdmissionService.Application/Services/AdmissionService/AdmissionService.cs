@@ -110,6 +110,44 @@ public class AdmissionService : IAdmissionService
     {
         return await _admissionSettingRepository.IsAdmissionOpenAsync();
     }
+
+    public async Task<bool> IsMine(Guid admissionId, Guid userId)
+    {
+        var admission = await  _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, userId, true);
+
+        if (admission == null)
+        {
+            throw new NotFoundException("Admission not found or not created");
+        }
+
+        if (admission.ManagerId == userId)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public async Task ChangeAdmissionStatus(Guid admissionId, AdmissionStatus newStatus, Guid managerId, bool isGigaWorker)
+    {
+        var admission = await  _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, managerId, true);
+        
+        if (admission == null)
+        {
+            throw new NotFoundException("Admission not found or not created");
+        }
+
+        if (!isGigaWorker && admission.ManagerId != managerId)
+        {
+            throw new ForbiddenAccessException("You cannot manage this admission");
+        }
+        
+        admission.Status = newStatus;
+        admission.ModifiedTime =  DateTime.UtcNow;
+        await _studentAdmissionRepository.SaveChangesAsync();
+        
+        await SendEmailToApplicant(admission.ApplicantId, newStatus);
+    }
     
     public async Task<AdmissionsDto> GetAdmissions(GetAdmissionsDto dto, Guid workerId)
     {
@@ -190,9 +228,11 @@ public class AdmissionService : IAdmissionService
         if (studentAdmission.ManagerId == workerId)
         {
             studentAdmission.ManagerId = null;
-            studentAdmission.Status = AdmissionStatus.Created;
+            
+            if (studentAdmission.Status == AdmissionStatus.InProgress)
+                studentAdmission.Status = AdmissionStatus.Created;
         }
-        else
+        else 
         {
             studentAdmission.ManagerId = workerId;
             studentAdmission.Status = AdmissionStatus.InProgress;

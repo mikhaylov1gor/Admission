@@ -58,11 +58,14 @@ public class AdmissionController : Controller
         try
         {
             var admission = await _admissionServiceClient.GetStudentAdmission(admissionId);
+            var isMine = await _admissionServiceClient.IsMineAdmission(admissionId);
             
+            Console.WriteLine(isMine);
             var viewModel = new AdmissionDetailsViewModel
             {
                 StudentAdmission = admission,
-                ApplicantId = applicantId
+                ApplicantId = applicantId,
+                IsMine = isMine
             };
             
             return View(viewModel);
@@ -72,6 +75,27 @@ public class AdmissionController : Controller
         {
             TempData["Error"] = "Ошибка при получении данных";
             return RedirectToAction("Admissions");
+        }
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Manager,SeniorManager, Administrator")]
+    public async Task<IActionResult> ChangeStatus(Guid admissionId, AdmissionStatus newStatus)
+    {
+        try
+        {
+            var result = await _admissionServiceClient.ChangeStatusAsync(admissionId, newStatus);
+            if (result)
+            {
+                TempData["StatusChanged"] = true;
+                return RedirectToAction("Details", new { admissionId });
+            }
+
+            return BadRequest("Не удалось изменить статус");
+        }
+        catch (Exception ex)
+        {
+            throw ex;
         }
     }
 }

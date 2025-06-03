@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AdmissionService.Application.Dtos.Responses;
 using Contract.Application.Exceptions;
+using Contract.Domain.Enums;
 using Contract.Dtos.Dtos.Requests;
 using Contract.Dtos.Dtos.Responses;
 
@@ -180,5 +181,62 @@ public class AdmissionServiceClient : IAdmissionServiceClient
             _logger.LogError(ex, "Unexpected error during getting admission");
             throw new BadRequestException($"Unexpected error during getting admission");
         }
+    }
+
+    public async Task<bool> IsMineAdmission(Guid admissionId)
+    {
+        var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
+                        .FirstOrDefault()?.Split(" ").Last()
+                    ?? _httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+
+        if (string.IsNullOrEmpty(token))
+        {
+            _logger.LogWarning("JWT token not found in headers or cookies");
+            throw new NotFoundException("JWT token not found in cookies");
+        }
+        
+        var url = $"api/Admin/Admission/{admissionId}/IsMine";
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request);
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("Failed to check admission ownership. Status code: {StatusCode}", response.StatusCode);
+            return false; 
+        }
+        
+        var content = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<bool>(content);
+    }
+
+    public async Task<bool> ChangeStatusAsync(Guid admissionId, AdmissionStatus newStatus)
+    {
+        var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
+                        .FirstOrDefault()?.Split(" ").Last()
+                    ?? _httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+
+        if (string.IsNullOrEmpty(token))
+        {
+            _logger.LogWarning("JWT token not found in headers or cookies");
+            throw new NotFoundException("JWT token not found in cookies");
+        }
+        
+        var url = $"api/Admin/Admission/{admissionId}/ChangeStatus?status={newStatus}";
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(request);
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("Failed to change admission status. Status code: {StatusCode}", response.StatusCode);
+            return false; 
+        }
+
+        return true;
     }
 }
