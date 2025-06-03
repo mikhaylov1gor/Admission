@@ -1,4 +1,5 @@
-﻿using AdmissionService.Application.Dtos.Responses;
+﻿using AdmissionService.Application.Dtos.Requests;
+using AdmissionService.Application.Dtos.Responses;
 using Contract.Domain.Enums;
 using Contract.Dtos.Dtos.Requests;
 using Contract.Dtos.Dtos.Responses;
@@ -16,4 +17,5 @@ public interface IAdmissionServiceClient
     
     Task <bool> ChangeStatusAsync(Guid admissionId, AdmissionStatus newStatus);
     Task<bool> RemoveProgramFromAdmissionAsync(Guid admissionId, Guid programId);
+    Task<bool> ChangePriorities(Guid admissionId, EditProgramsDto dto);
 }

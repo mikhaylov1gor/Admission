@@ -1,5 +1,6 @@
 ﻿using AdminPanel.Mvc.Models.Admissions;
 using AdminPanel.Mvc.Services.AdmissionServiceClient;
+using AdmissionService.Application.Dtos.Requests;
 using AdmissionService.Application.Dtos.Responses;
 using AdmissionService.Domain.Entities;
 using Contract.Domain.Enums;
@@ -112,6 +113,38 @@ public class AdmissionController : Controller
                 return RedirectToAction("Details", new { admissionId });
             }
             return BadRequest("Не удалось удалить программу");
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Manager,SeniorManager, Administrator")]
+    public async Task<IActionResult> ChangeProgramPriorities(Guid admissionId, [FromForm] EditProgramsDto dto)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage);
+                
+                TempData["PriorityError"] = string.Join("; ", errors);
+                return RedirectToAction("Details", new { admissionId });
+            }
+            
+            var result = await _admissionServiceClient.ChangePriorities(admissionId, dto);
+            
+            if (result)
+            {
+                TempData["PrioritiesUpdated"] = true;
+                return RedirectToAction("Details", new { admissionId });
+            }
+
+            return BadRequest("Не удалось изменить приоритеты");
         }
         catch (Exception ex)
         {

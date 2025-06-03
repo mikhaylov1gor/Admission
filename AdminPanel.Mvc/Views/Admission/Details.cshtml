@@ -24,17 +24,17 @@
                asp-action="Details"
                asp-route-applicantId="@Model.ApplicantId"
                class="btn btn-primary">
-                <i class="bi bi-person-circle"></i> Посмотреть профиль абитуриента
+                <i class="bi bi-person-circle"></i> Профиль абитуриента
             </a>
         }
         else
         {
-            <h6>
-                Ошибка при получении Id абитуриента
+            <h6 class="text-danger">
+                Ошибка при получении ID абитуриента
             </h6>
         }
     </div>
-    
+
     <div class="card mb-4">
         <div class="card-header">
             <h4>Основная информация</h4>
@@ -79,60 +79,133 @@
             @if (Model.IsMine)
             {
                 <div class="alert alert-info mt-3">
-                    Вы можете редактировать это заявление
+                    <i class="bi bi-info-circle"></i> Вы можете редактировать это заявление
                 </div>
             }
         </div>
     </div>
 
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h4>Выбранные программы</h4>
+            @if (Model.IsMine && Model.StudentAdmission.AdmissionPrograms?.Any() == true)
+            {
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="edit-priorities-btn">
+                        <i class="bi bi-pencil"></i> Редактировать приоритеты
+                    </button>
+                </div>
+            }
         </div>
         <div class="card-body">
             @if (Model?.StudentAdmission.AdmissionPrograms?.Any() ?? false)
             {
-                <div class="list-group">
-                    @foreach (var program in Model.StudentAdmission.AdmissionPrograms.OrderBy(p => p.Priority))
-                    {
-                        <div class="list-group-item mb-3 position-relative">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">@program.EducationProgram.Name</h5>
-                                <div>
-                                    <span class="badge bg-secondary me-2">Приоритет: @program.Priority</span>
-                                    @if (Model.IsMine)
-                                    {
-                                        <form asp-action="DeleteProgram" asp-controller="Admission" method="post"
-                                              class="d-inline">
-                                            <input type="hidden" name="admissionId" value="@Model.StudentAdmission.Id"/>
-                                            <input type="hidden" name="programId" value="@program.Id"/>
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                <form asp-action="ChangeProgramPriorities" asp-controller="Admission" method="post" id="priority-form" style="display: none;">
+                    <input type="hidden" name="admissionId" value="@Model.StudentAdmission.Id" />
+
+                    <div class="list-group" id="programs-list">
+                        @{
+                            int index = 0;
+                            @foreach (var program in Model.StudentAdmission.AdmissionPrograms.OrderBy(p => p.Priority))
+                            {
+                                <div class="list-group-item mb-3 position-relative" data-program-id="@program.Id">
+                                    <div class="d-flex w-100 justify-content-between align-items-start">
+                                        <div class="flex-grow-1 me-3">
+                                            <h5 class="mb-1">@program.EducationProgram.Name</h5>
+                                            <div class="row mt-2">
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Код:</strong> @program.EducationProgram.Code</p>
+                                                    <p class="mb-1"><strong>Язык:</strong> @program.EducationProgram.Language</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Форма:</strong> @program.EducationProgram.EducationForm</p>
+                                                    <p class="mb-1"><strong>Уровень:</strong> @program.EducationProgram.EducationLevel.Name</p>
+                                                </div>
+                                            </div>
+                                            <p class="mt-2 mb-1"><strong>Факультет:</strong> @program.EducationProgram.Faculty.Name</p>
+                                        </div>
+
+                                        <div class="d-flex flex-column align-items-end" style="min-width: 120px;">
+                                            <div class="mb-2">
+                                                <label class="form-label small">Приоритет</label>
+                                                <input type="number"
+                                                       name="EditPrograms[@index].Priority"
+                                                       value="@program.Priority"
+                                                       min="1"
+                                                       max="@Model.StudentAdmission.AdmissionPrograms.Count"
+                                                       class="form-control form-control-sm priority-input"
+                                                       style="width: 70px;"
+                                                       required>
+                                                <input type="hidden"
+                                                       name="EditPrograms[@index].EducationProgramId"
+                                                       value="@program.EducationProgram.Id">
+                                            </div>
+                                            <button type="submit" formaction="@Url.Action("DeleteProgram", "Admission")"
+                                                    class="btn btn-sm btn-outline-danger"
                                                     onclick="return confirm('Вы уверены, что хотите удалить эту программу?')">
-                                                Удалить
+                                                <i class="bi bi-trash"></i> Удалить
                                             </button>
-                                        </form>
-                                    }
+                                        </div>
+                                    </div>
                                 </div>
+                                index++;
+                            }
+                        }
+                    </div>
+
+                    <div class="mt-3 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-save"></i> Сохранить
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="cancel-edit-btn">
+                            <i class="bi bi-x"></i> Отмена
+                        </button>
+                    </div>
+                </form>
+
+                <div id="programs-view">
+                    <div class="list-group">
+                        @foreach (var program in Model.StudentAdmission.AdmissionPrograms.OrderBy(p => p.Priority))
+                        {
+                            <div class="list-group-item mb-3">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">@program.EducationProgram.Name</h5>
+                                    <div>
+                                        <span class="badge bg-secondary me-2">Приоритет: @program.Priority</span>
+                                        @if (Model.IsMine)
+                                        {
+                                            <form asp-action="DeleteProgram" asp-controller="Admission" method="post"
+                                                  class="d-inline">
+                                                <input type="hidden" name="admissionId" value="@Model.StudentAdmission.Id" />
+                                                <input type="hidden" name="programId" value="@program.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('Вы уверены, что хотите удалить эту программу?')">
+                                                    <i class="bi bi-trash"></i> Удалить
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Код:</strong> @program.EducationProgram.Code</p>
+                                        <p class="mb-1"><strong>Язык:</strong> @program.EducationProgram.Language</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Форма:</strong> @program.EducationProgram.EducationForm</p>
+                                        <p class="mb-1"><strong>Уровень:</strong> @program.EducationProgram.EducationLevel.Name</p>
+                                    </div>
+                                </div>
+                                <p class="mt-2 mb-1"><strong>Факультет:</strong> @program.EducationProgram.Faculty.Name</p>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-md-6">
-                                    <p class="mb-1"><strong>Код программы:</strong> @program.EducationProgram.Code</p>
-                                    <p class="mb-1"><strong>Язык обучения:</strong> @program.EducationProgram.Language</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="mb-1"><strong>Форма обучения:</strong> @program.EducationProgram.EducationForm</p>
-                                    <p class="mb-1"><strong>Уровень:</strong> @program.EducationProgram.EducationLevel.Name</p>
-                                </div>
-                            </div>
-                            <p class="mt-2 mb-1"><strong>Факультет:</strong> @program.EducationProgram.Faculty.Name</p>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
             }
             else
             {
                 <div class="alert alert-warning">
-                    Нет выбранных программ обучения
+                    <i class="bi bi-exclamation-triangle"></i> Нет выбранных программ обучения
                 </div>
             }
         </div>
@@ -152,4 +225,70 @@
             toastr.success('Программа успешно удалена');
         </script>
     }
+    @if (TempData["PrioritiesUpdated"] != null)
+    {
+        <script>
+            toastr.success('Приоритеты успешно обновлены');
+        </script>
+    }
+    
+    <script>
+        $(document).ready(function() {
+            $('#edit-priorities-btn').click(function() {
+                $('#programs-view').hide();
+                $('#priority-form').show();
+                $(this).hide();
+            });
+
+            $('#cancel-edit-btn').click(function() {
+                $('#priority-form').hide();
+                $('#programs-view').show();
+                $('#edit-priorities-btn').show();
+                $('.priority-input').each(function() {
+                    $(this).val($(this).data('original-value'));
+                });
+            });
+
+            $('.priority-input').each(function() {
+                $(this).data('original-value', $(this).val());
+            });
+
+            $('#priority-form').submit(function(e) {
+                const inputs = $('.priority-input');
+                const values = inputs.map(function() {
+                    return parseInt($(this).val());
+                }).get();
+
+                const uniqueValues = [...new Set(values)];
+                if (values.length !== uniqueValues.length) {
+                    e.preventDefault();
+                    toastr.error('Все приоритеты должны быть уникальными');
+                    return false;
+                }
+                
+                const maxPriority = @Model?.StudentAdmission.AdmissionPrograms?.Count ?? 0;
+                const invalidValues = values.filter(v => v < 1 || v > maxPriority);
+                if (invalidValues.length > 0) {
+                    e.preventDefault();
+                    toastr.error(`Приоритеты должны быть от 1 до ${maxPriority}`);
+                    return false;
+                }
+
+                return true;
+            });
+
+            $('.priority-input').change(function() {
+                const container = $('#programs-list');
+                const items = container.children('.list-group-item').get();
+
+                items.sort((a, b) => {
+                    const aVal = parseInt($(a).find('.priority-input').val());
+                    const bVal = parseInt($(b).find('.priority-input').val());
+                    return aVal - bVal;
+                });
+
+                container.append(items);
+            });
+        });
+    </script>
 }

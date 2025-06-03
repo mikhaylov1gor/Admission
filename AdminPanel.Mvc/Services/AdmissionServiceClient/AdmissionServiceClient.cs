@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AdmissionService.Application.Dtos.Requests;
 using AdmissionService.Application.Dtos.Responses;
 using Contract.Application.Exceptions;
 using Contract.Domain.Enums;
@@ -262,6 +264,43 @@ public class AdmissionServiceClient : IAdmissionServiceClient
         if (!response.IsSuccessStatusCode)
         {
             _logger.LogError("Failed to change admission status. Status code: {StatusCode}", response.StatusCode);
+            return false; 
+        }
+
+        return true;
+    }
+
+    public async Task<bool> ChangePriorities(Guid admissionId, EditProgramsDto dto)
+    {
+        var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
+                        .FirstOrDefault()?.Split(" ").Last()
+                    ?? _httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+
+        if (string.IsNullOrEmpty(token))
+        {
+            _logger.LogWarning("JWT token not found in headers or cookies");
+            throw new NotFoundException("JWT token not found in cookies");
+        }
+        
+        var url = $"api/Admin/Admissions/{admissionId}/Priorities";
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var jsonContent = JsonSerializer.Serialize(dto, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
+        });
+        
+        Console.WriteLine($"dto : {jsonContent}");
+        
+        request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.SendAsync(request);
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("Failed to change program priorities. Status code: {StatusCode}", response.StatusCode);
             return false; 
         }
 

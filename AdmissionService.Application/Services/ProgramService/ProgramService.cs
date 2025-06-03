@@ -7,6 +7,7 @@ using AdmissionService.Domain.Entities;
 using AdmissionService.Domain.IRepositories;
 using Contract.Application.Exceptions;
 using Contract.Application.Validations;
+using Contract.Domain.Enums;
 
 namespace AdmissionService.Application.Services.ProgramService;
 
@@ -40,6 +41,11 @@ public class ProgramService : IProgramService
 
         var currentAdmission = await _studentAdmissionRepository.GetCurrentStudentAdmissionAsync(userId);
 
+        if (currentAdmission.Status == AdmissionStatus.Closed)
+        {
+            throw new ForbiddenAccessException("Your admission is closed");
+        }
+        
         if (currentAdmission == null)
         {
             throw new BadRequestException("User don't have an admission");
@@ -106,6 +112,11 @@ public class ProgramService : IProgramService
 
         var currentAdmission = await _studentAdmissionRepository.GetCurrentStudentAdmissionAsync(userId);
 
+        if (currentAdmission.Status == AdmissionStatus.Closed)
+        {
+            throw new ForbiddenAccessException("Your admission is closed");
+        }
+
         if (currentAdmission == null)
         {
             throw new BadRequestException("User don't have current admission");
@@ -122,6 +133,38 @@ public class ProgramService : IProgramService
         }
         
         var programDictionary = currentAdmission.AdmissionPrograms.ToDictionary(p => p.Id);
+        foreach (var programDto in dto.EditPrograms)
+        {
+            if (programDictionary.TryGetValue(programDto.EducationProgramId, out var program))
+            {
+                program.Priority = programDto.Priority;
+                await _studentAdmissionRepository.UpdateAdmissionProgram(program);
+            }
+        }
+        
+        await _studentAdmissionRepository.SaveChangesAsync();
+    }
+
+    public async Task EditAdmissionProgramsForManager(Guid admissionId, EditProgramsDto dto, Guid managerId, 
+        bool isGigaWorker)
+    {
+        var admission = await  _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, managerId, true);
+        if (admission == null)
+        {
+            throw new NotFoundException("Admission not found or not created");
+        }
+        
+        if (!IsPrioritiesUnique(dto))
+        {
+            throw new BadRequestException($"Priorities are not unique");
+        }
+
+        if (!IsProgramsExistsInAdmission(dto, admission))
+        {
+            throw new BadRequestException("Some programs are not exists in your admission or not exists in dto");
+        }
+        
+        var programDictionary = admission.AdmissionPrograms.ToDictionary(p => p.Id);
         foreach (var programDto in dto.EditPrograms)
         {
             if (programDictionary.TryGetValue(programDto.EducationProgramId, out var program))

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AdmissionService.Application.Dtos.Requests;
 using AdmissionService.Application.Services.AdmissionService;
 using AdmissionService.Application.Services.ProgramService;
 using Contract.Api.Controller;
@@ -73,6 +74,17 @@ public class AdminController : BaseController
         var isGigaWorker = role == "Administrator" || role == "SeniorManager";
         
         await _programService.RemoveProgramForManager(admissionId, programId, UserId, isGigaWorker);
+        return Ok();
+    }
+
+    [HttpPut("Admissions/{admissionId}/Priorities")]
+    public async Task<IActionResult> ChangePriorities(Guid admissionId, EditProgramsDto dto)
+    {
+        var role = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+        
+        var isGigaWorker = role == "Administrator" || role == "SeniorManager";
+        
+        await _programService.EditAdmissionProgramsForManager(admissionId, dto, UserId, isGigaWorker);
         return Ok();
     }
 }
