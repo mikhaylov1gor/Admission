@@ -15,4 +15,5 @@ public interface IAdmissionServiceClient
     Task<bool> IsMineAdmission(Guid admissionId);
     
     Task <bool> ChangeStatusAsync(Guid admissionId, AdmissionStatus newStatus);
+    Task<bool> RemoveProgramFromAdmissionAsync(Guid admissionId, Guid programId);
 }

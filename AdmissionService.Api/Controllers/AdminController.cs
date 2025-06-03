@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using AdmissionService.Application.Services.AdmissionService;
+using AdmissionService.Application.Services.ProgramService;
 using Contract.Api.Controller;
 using Contract.Domain.Enums;
 using Contract.Dtos.Dtos.Requests;
@@ -13,10 +14,13 @@ namespace AdmissionService.Api.Controllers;
 public class AdminController : BaseController
 {
     private readonly IAdmissionService _admissionService;
+    private readonly IProgramService _programService;
 
-    public AdminController(IAdmissionService admissionService)
+    public AdminController(IAdmissionService admissionService,
+        IProgramService programService)
     {
         _admissionService = admissionService;
+        _programService = programService;
     }
 
     [HttpGet("Admissions/Get")]
@@ -57,6 +61,18 @@ public class AdminController : BaseController
         var isGigaWorker = role == "Administrator" || role == "SeniorManager";
         
         await _admissionService.ChangeAdmissionStatus(admissionId, status, UserId, isGigaWorker);
+        return Ok();
+    }
+
+    [HttpDelete("Admissions/{admissionId}/Programs/{programId}")]
+    [Authorize(Roles = "Administrator, Manager, SeniorManager")]
+    public async Task<IActionResult> RemoveProgramFromAdmission(Guid admissionId, Guid programId)
+    {
+        var role = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+        
+        var isGigaWorker = role == "Administrator" || role == "SeniorManager";
+        
+        await _programService.RemoveProgramForManager(admissionId, programId, UserId, isGigaWorker);
         return Ok();
     }
 }

@@ -158,6 +158,29 @@ public class ProgramService : IProgramService
         await _studentAdmissionRepository.DeleteStudentAdmissionProgramByIdAsync(currentAdmission.Id, programId);
     }
 
+    public async Task RemoveProgramForManager(Guid admissionId, Guid programId, Guid managerId, bool isGigaWorker)
+    {
+        var admission = await  _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, managerId, true);
+        if (admission == null)
+        {
+            throw new NotFoundException("Admission not found or not created");
+        }
+
+        if (!isGigaWorker && admission.ManagerId != managerId)
+        {
+            throw new ForbiddenAccessException("You cannot manage this admission");
+        }
+        
+        var program = admission.AdmissionPrograms.FirstOrDefault(p => p.Id == programId);
+
+        if (program == null)
+        {
+            throw new NotFoundException($"Admission Program with id: {programId} does not exist");
+        }
+
+        await _studentAdmissionRepository.DeleteStudentAdmissionProgramByIdAsync(admission.Id, programId);
+    }
+
     private bool IsPrioritiesUnique(EditProgramsDto dto)
     {
         var priorities = dto.EditPrograms.Select(p => p.Priority).ToList();

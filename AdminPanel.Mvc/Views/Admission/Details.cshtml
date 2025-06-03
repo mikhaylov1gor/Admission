@@ -95,10 +95,24 @@
                 <div class="list-group">
                     @foreach (var program in Model.StudentAdmission.AdmissionPrograms.OrderBy(p => p.Priority))
                     {
-                        <div class="list-group-item mb-3">
+                        <div class="list-group-item mb-3 position-relative">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">@program.EducationProgram.Name</h5>
-                                <span class="badge bg-secondary">Приоритет: @program.Priority</span>
+                                <div>
+                                    <span class="badge bg-secondary me-2">Приоритет: @program.Priority</span>
+                                    @if (Model.IsMine)
+                                    {
+                                        <form asp-action="DeleteProgram" asp-controller="Admission" method="post"
+                                              class="d-inline">
+                                            <input type="hidden" name="admissionId" value="@Model.StudentAdmission.Id"/>
+                                            <input type="hidden" name="programId" value="@program.Id"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Вы уверены, что хотите удалить эту программу?')">
+                                                Удалить
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-6">
@@ -130,6 +144,12 @@
     {
         <script>
             toastr.success('Статус успешно изменён');
+        </script>
+    }
+    @if (TempData["ProgramDeleted"] != null)
+    {
+        <script>
+            toastr.success('Программа успешно удалена');
         </script>
     }
 }

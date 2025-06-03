@@ -95,7 +95,27 @@ public class AdmissionController : Controller
         }
         catch (Exception ex)
         {
-            throw ex;
+            throw;
+        }
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Manager,SeniorManager, Administrator")]
+    public async Task<IActionResult> DeleteProgram(Guid admissionId, Guid programId)
+    {
+        try
+        {
+            var result = await _admissionServiceClient.RemoveProgramFromAdmissionAsync(admissionId, programId);
+            if (result)
+            {
+                TempData["ProgramDeleted"] = true;
+                return RedirectToAction("Details", new { admissionId });
+            }
+            return BadRequest("Не удалось удалить программу");
+        }
+        catch (Exception ex)
+        {
+            throw;
         }
     }
 }
