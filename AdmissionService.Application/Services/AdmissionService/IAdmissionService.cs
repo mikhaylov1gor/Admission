@@ -22,4 +22,5 @@ public interface IAdmissionService
     Task TakeUntakeAdmission(Guid admissionId, Guid workerId, Guid userId);
     
     Task AssignManager(Guid admissionId, Guid managerId);
+    Task <bool> IsMineApplicantByAdmission(Guid applicantId, bool isGigaWorker, Guid UserId);
 }

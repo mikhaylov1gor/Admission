@@ -1,4 +1,5 @@
 ﻿using AdminPanel.Mvc.Models.Dtos;
+using UserService.Application.Dtos.Requests;
 using UserService.Application.Dtos.Responses;
 
 namespace AdminPanel.Mvc.Services.UserServiceClient;
@@ -11,6 +12,6 @@ public interface IUserServiceClient
     Task<List<ManagerDto>> GetAllManagers(bool isAllManagers);
     Task<List<ApplicantDto>> GetAllApplicants();
     Task<bool> AssignRole(Guid userId, string role);
-    
     Task<ApplicantDto> GetApplicant(Guid applicantId);
+    Task <bool> EditUserData(EditUserDto dto, Guid applicantId);
 }

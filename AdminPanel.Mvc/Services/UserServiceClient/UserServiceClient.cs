@@ -1,7 +1,10 @@
 ﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AdminPanel.Mvc.Models.Dtos;
+using Contract.Application.Exceptions;
+using UserService.Application.Dtos.Requests;
 using UserService.Application.Dtos.Responses;
 
 namespace AdminPanel.Mvc.Services.UserServiceClient;
@@ -264,6 +267,48 @@ public class UserServiceClient : IUserServiceClient
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error get applicant");
+            throw;
+        }
+    }
+
+    public async Task<bool> EditUserData(EditUserDto dto, Guid applicantId)
+    {
+        try
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
+                            .FirstOrDefault()?.Split(" ").Last()
+                        ?? _httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+
+            if (string.IsNullOrEmpty(token))
+            {
+                _logger.LogWarning("JWT token not found in headers or cookies");
+                throw new NotFoundException("JWT token not found in cookies");
+            }
+
+            var url = $"api/Admin/Applicant/{applicantId}/ChangeProfile";
+
+            using var request = new HttpRequestMessage(HttpMethod.Put, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var jsonContent = JsonSerializer.Serialize(dto, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = false
+            });
+
+            request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Failed to change user data. Status code: {StatusCode}", response.StatusCode);
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
             throw;
         }
     }

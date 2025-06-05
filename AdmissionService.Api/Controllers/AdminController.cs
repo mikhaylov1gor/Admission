@@ -95,4 +95,16 @@ public class AdminController : BaseController
         await _admissionService.AssignManager(admissionId, managerId);
         return Ok();
     }
+
+    [HttpGet("Applicants/{applicantId}")]
+    [Authorize(Roles = "Manager, Administrator, SeniorManager")]
+    public async Task<IActionResult> IsMineApplicant(Guid applicantId)
+    {
+        var role = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+        
+        var isGigaWorker = role == "Administrator" || role == "SeniorManager";
+        
+        var response = await _admissionService.IsMineApplicantByAdmission(applicantId, isGigaWorker, UserId);
+        return Ok(response);
+    }
 }

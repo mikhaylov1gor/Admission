@@ -1,4 +1,5 @@
-﻿using DocumentService.Application.Services.DocumentService;
+﻿using DocumentService.Application.Dtos.Requests;
+using DocumentService.Application.Services.DocumentService;
 using DocumentService.Application.Services.ScanService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,5 +41,37 @@ public class AdminController : ControllerBase
     {
         var response = await _scanService.DownloadDocumentScan(scanId, applicantId);
         return File(response.Data, response.ContentType, response.FileName);
+    }
+
+    [HttpPut("Applicant/{applicantId}/ChangePassport")]
+    [Authorize(Roles = "Manager, SeniorManager, Administrator")]
+    public async Task<IActionResult> ChangePassport(EditPassportDto dto, Guid applicantId)
+    {
+        await _documentService.EditPassport(dto, applicantId);
+        return Ok();
+    }
+    
+    [HttpPut("Applicant/{applicantId}/ChangeEducationDocument")]
+    [Authorize(Roles = "Manager, SeniorManager, Administrator")]
+    public async Task<IActionResult> ChangePassport(EditEducationDocumentDto dto, Guid applicantId)
+    {
+        await _documentService.EditEducationDocument(dto, applicantId);
+        return Ok();
+    }
+
+    [HttpDelete("Applicants/{applicantId}/Files/{scanId}")]
+    [Authorize(Roles = "Manager, SeniorManager, Administrator")]
+    public async Task<IActionResult> DeleteFile(Guid scanId, Guid applicantId)
+    {
+        await _scanService.DeleteDocumentScan(scanId, applicantId);
+        return Ok();
+    }
+
+    [HttpPost("Applicants/{applicantId}/Documents/{documentId}")]
+    [Authorize(Roles = "Manager, SeniorManager, Administrator")]
+    public async Task<IActionResult> UploadScanToDocument(Guid applicantId, CreateScanDto dto, Guid documentId)
+    {
+        await _scanService.UploadScanToDocument(documentId, dto, applicantId);
+        return Ok();
     }
 }

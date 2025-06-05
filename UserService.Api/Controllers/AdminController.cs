@@ -2,6 +2,7 @@
 using Contract.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Application.Dtos.Requests;
 using UserService.Application.Services.ApplicantService;
 using UserService.Domain.Entities;
 using UserService.Domain.IRepositories;
@@ -65,5 +66,13 @@ public class AdminController : ControllerBase
     {
         var response = await _applicantService.GetProfile(applicantId);
         return Ok(response.Value);
+    }
+
+    [HttpPut("Applicant/{applicantId}/ChangeProfile")]
+    [Authorize(Roles = "Administrator, Manager, SeniorManager")]
+    public async Task<IActionResult> ChangeApplicantProfile(EditUserDto dto, Guid applicantId)
+    {
+        await _applicantService.EditProfile(dto, applicantId);
+        return Ok();
     }
 }

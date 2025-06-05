@@ -14,7 +14,7 @@ public class WhenIssuedPassport : ValidationAttribute
         {
             if (dateTime >= DateTime.Now)
                 return new ValidationResult("Issued date cannot be in the future.");
-            if (dateTime < DateTime.UtcNow - TimeSpan.FromDays(MinimumAge * 365))
+            if (dateTime > DateTime.UtcNow - TimeSpan.FromDays(MinimumAge * 365))
                 return new ValidationResult($"Your age must be grater than {MinimumAge}.");
             return ValidationResult.Success;
         }

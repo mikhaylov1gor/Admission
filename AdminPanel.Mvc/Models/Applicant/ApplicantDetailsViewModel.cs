@@ -8,4 +8,6 @@ public class ApplicantDetailsViewModel
     public ApplicantDto? Applicant { get; set; }
     public PassportDto? Passport { get; set; }
     public EducationDocumentDto? EducationDocument { get; set; }
+    public List<EducationDocumentTypeDto> DocumentTypes { get; set; }
+    public bool IsMine { get; set; }
 }

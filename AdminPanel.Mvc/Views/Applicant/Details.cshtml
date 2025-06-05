@@ -4,6 +4,20 @@
 }
 
 <div class="container mt-4">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+    
     <div class="row">
         <div class="col-md-8">
             <h2>@ViewData["Title"]</h2>
@@ -12,10 +26,16 @@
             <a href="@Url.Action("Index")" class="btn btn-secondary">Назад к списку</a>
         </div>
     </div>
-
+    
     <div class="card mt-3">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
             <h4>Основная информация</h4>
+            @if (Model.IsMine == true)
+            {
+                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#editApplicantForm" aria-expanded="false" aria-controls="editApplicantForm">
+                    <i class="bi bi-pencil"></i> Редактировать
+                </button>
+            }
         </div>
         <div class="card-body">
             <div class="row">
@@ -30,14 +50,69 @@
                     <p><strong>Гражданство:</strong> @(Model.Applicant.Citizenship ?? "-")</p>
                 </div>
             </div>
+
+            <!-- Edit Applicant Form -->
+            <div class="collapse mt-3" id="editApplicantForm">
+                <form asp-action="EditUserData" asp-controller="Applicant" asp-route-applicantId="@Model.Applicant.Id" method="post" class="needs-validation" novalidate>
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="fullName" class="form-label">ФИО</label>
+                            <input type="text" class="form-control" id="fullName" name="FullName" value="@Model.Applicant.FullName" required maxlength="100" />
+                            <div class="invalid-feedback">Пожалуйста, введите ФИО (максимум 100 символов).</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="Email" value="@Model.Applicant.Email" required />
+                            <div class="invalid-feedback">Пожалуйста, введите корректный email.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phoneNumber" class="form-label">Телефон</label>
+                            <input type="text" class="form-control" id="phoneNumber" name="PhoneNumber" value="@Model.Applicant.PhoneNumber" />
+                            <div class="invalid-feedback">Пожалуйста, введите корректный номер телефона.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="birthday" class="form-label">Дата рождения</label>
+                            <input type="date" class="form-control" id="birthday" name="Birthday" value="@Model.Applicant.BirthDay.ToString("yyyy-MM-dd")" required />
+                            <div class="invalid-feedback">Пожалуйста, выберите дату рождения.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="gender" class="form-label">Пол</label>
+                            <select class="form-select" id="gender" name="Gender" required>
+                                <option value="" disabled>Выберите пол</option>
+                                @foreach (var gender in Enum.GetValues(typeof(Contract.Domain.Enums.Gender)))
+                                {
+                                    <option value="@gender" selected="@(Model.Applicant.Gender.ToString() == gender.ToString())">@gender</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback">Пожалуйста, выберите пол.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="citizenship" class="form-label">Гражданство</label>
+                            <input type="text" class="form-control" id="citizenship" name="Citizenship" value="@Model.Applicant.Citizenship" maxlength="100" />
+                            <div class="invalid-feedback">Гражданство должно быть не длиннее 100 символов.</div>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#editApplicantForm">Отмена</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     @if (Model.Passport != null)
     {
         <div class="card mt-3">
-            <div class="card-header bg-info text-white">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                 <h4>Паспортные данные</h4>
+                @if (Model.IsMine == true)
+                {
+                    <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#editPassportForm" aria-expanded="false" aria-controls="editPassportForm">
+                        <i class="bi bi-pencil"></i> Редактировать
+                    </button>
+                }
             </div>
             <div class="card-body">
                 <div class="row">
@@ -52,6 +127,44 @@
                     </div>
                 </div>
                 
+                <!-- Edit Passport Form -->
+                <div class="collapse mt-3" id="editPassportForm">
+                    <form asp-action="EditPassport" asp-controller="Applicant" asp-route-applicantId="@Model.Applicant.Id" method="post" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="serial" class="form-label">Серия</label>
+                                <input type="number" class="form-control" id="serial" name="Serial" value="@Model.Passport.Serial" required min="1000" max="9999"/>
+                                <div class="invalid-feedback">Серия должна быть числом от 1000 до 9999.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="number" class="form-label">Номер</label>
+                                <input type="number" class="form-control" id="number" name="Number" value="@Model.Passport.Number" required min="100000" max="999999"/>
+                                <div class="invalid-feedback">Номер должен быть числом от 100000 до 999999.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="hometown" class="form-label">Место рождения</label>
+                                <input type="text" class="form-control" id="hometown" name="Hometown" value="@Model.Passport.Hometown" required maxlength="100"/>
+                                <div class="invalid-feedback">Место рождения должно быть не длиннее 100 символов.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="whenIssued" class="form-label">Дата выдачи</label>
+                                <input type="date" class="form-control" id="whenIssued" name="WhenIssued" value="@Model.Passport.WhenIssued.ToString("yyyy-MM-dd")" required/>
+                                <div class="invalid-feedback">Пожалуйста, выберите дату выдачи.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="whoIssued" class="form-label">Кем выдан</label>
+                                <input type="text" class="form-control" id="whoIssued" name="WhoIssued" value="@Model.Passport.WhoIssued" required maxlength="100"/>
+                                <div class="invalid-feedback">Кем выдан должно быть не длиннее 100 символов.</div>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#editPassportForm">Отмена</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
                 @if (Model.Passport.Files != null && Model.Passport.Files.Any())
                 {
                     <div class="mt-3">
@@ -61,13 +174,47 @@
                             {
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     @file.FileName
-                                    <a href="@Url.Action("DownloadScan", "Applicant", new { scanId = file.Id, applicantId = Model.Applicant.Id })" 
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-download"></i> Скачать
-                                    </a>
+                                    <div>
+                                        <a href="@Url.Action("DownloadScan", "Applicant", new { scanId = file.Id, applicantId = Model.Applicant.Id })"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-download"></i> Скачать
+                                        </a>
+                                        @if (Model.IsMine)
+                                        {
+                                            <form asp-action="DeleteFile" asp-controller="Applicant" asp-route-scanId="@file.Id" asp-route-applicantId="@Model.Applicant.Id"
+                                                  method="post" class="d-inline" onsubmit="return confirm('Вы уверены, что хотите удалить файл @file.FileName?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i> Удалить
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
                                 </li>
                             }
                         </ul>
+                    </div>
+                }
+                @if (Model.IsMine)
+                {
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addPassportFileForm" aria-expanded="false" aria-controls="addPassportFileForm">
+                            <i class="bi bi-plus"></i> Добавить файл
+                        </button>
+                        <div class="collapse mt-2" id="addPassportFileForm">
+                            <form asp-action="UploadFile" asp-controller="Applicant" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="documentId" value="@Model.Passport.Id" />
+                                <input type="hidden" name="applicantId" value="@Model.Applicant.Id" />
+                                <div class="mb-3">
+                                    <label for="filePassport" class="form-label">Выберите файл</label>
+                                    <input type="file" class="form-control" id="filePassport" name="File" required accept=".pdf,.jpg,.jpeg,.png" />
+                                    <div class="invalid-feedback">Пожалуйста, выберите файл (.pdf, .jpg, .jpeg, .png).</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Загрузить</button>
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#addPassportFileForm">Отмена</button>
+                            </form>
+                        </div>
                     </div>
                 }
             </div>
@@ -77,8 +224,14 @@
     @if (Model.EducationDocument != null)
     {
         <div class="card mt-3">
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                 <h4>Документ об образовании</h4>
+                @if (Model.IsMine == true)
+                {
+                    <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#editEducationDocumentForm" aria-expanded="false" aria-controls="editEducationDocumentForm">
+                        <i class="bi bi-pencil"></i> Редактировать
+                    </button>
+                }
             </div>
             <div class="card-body">
                 <div class="row">
@@ -90,6 +243,38 @@
                         <p><strong>Уровень образования:</strong> @Model.EducationDocument.EducationDocumentType.EducationLevel.Name</p>
                     </div>
                 </div>
+
+                <div class="collapse mt-3" id="editEducationDocumentForm">
+                    <form asp-action="EditEducationDocument" asp-controller="Applicant" asp-route-applicantId="@Model.Applicant.Id" method="post" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ApplicantId" value="@Model.Applicant.Id" />
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Название</label>
+                                <input type="text" class="form-control" id="name" name="Name" value="@Model.EducationDocument.Name" required />
+                                <div class="invalid-feedback">Пожалуйста, введите название документа.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="educationDocumentTypeId" class="form-label">Тип документа</label>
+                                <select class="form-select" id="educationDocumentTypeId" name="EducationDocumentTypeId" required>
+                                    <option value="" disabled>Выберите тип документа</option>
+                                    @if (Model.DocumentTypes != null)
+                                    {
+                                        foreach (var docType in Model.DocumentTypes)
+                                        {
+                                            <option value="@docType.Id" selected="@(Model.EducationDocument.EducationDocumentType.Id == docType.Id)">@docType.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div class="invalid-feedback">Пожалуйста, выберите тип документа.</div>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#editEducationDocumentForm">Отмена</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 
                 @if (Model.EducationDocument.Files != null && Model.EducationDocument.Files.Any())
                 {
@@ -100,13 +285,47 @@
                             {
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     @file.FileName
-                                    <a href="@Url.Action("DownloadScan", "Applicant", new { scanId = file.Id, applicantId = Model.Applicant.Id })" 
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-download"></i> Скачать
-                                    </a>
+                                    <div>
+                                        <a href="@Url.Action("DownloadScan", "Applicant", new { scanId = file.Id, applicantId = Model.Applicant.Id })"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-download"></i> Скачать
+                                        </a>
+                                        @if (Model.IsMine)
+                                        {
+                                            <form asp-action="DeleteFile" asp-controller="Applicant" asp-route-scanId="@file.Id" asp-route-applicantId="@Model.Applicant.Id"
+                                                  method="post" class="d-inline" onsubmit="return confirm('Вы уверены, что хотите удалить файл @file.FileName?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i> Удалить
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
                                 </li>
                             }
                         </ul>
+                    </div>
+                }
+                @if (Model.IsMine)
+                {
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addEducationFileForm" aria-expanded="false" aria-controls="addEducationFileForm">
+                            <i class="bi bi-plus"></i> Добавить файл
+                        </button>
+                        <div class="collapse mt-2" id="addEducationFileForm">
+                            <form asp-action="UploadFile" asp-controller="Applicant" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="documentId" value="@Model.EducationDocument.Id" />
+                                <input type="hidden" name="applicantId" value="@Model.Applicant.Id" />
+                                <div class="mb-3">
+                                    <label for="fileEducation" class="form-label">Выберите файл</label>
+                                    <input type="file" class="form-control" id="fileEducation" name="File" required accept=".pdf,.jpg,.jpeg,.png" />
+                                    <div class="invalid-feedback">Пожалуйста, выберите файл (.pdf, .jpg, .jpeg, .png).</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Загрузить</button>
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#addEducationFileForm">Отмена</button>
+                            </form>
+                        </div>
                     </div>
                 }
             </div>

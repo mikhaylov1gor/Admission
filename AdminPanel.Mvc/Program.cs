@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using AdminPanel.Mvc.Middlewaries;
 using AdminPanel.Mvc.Services.AdmissionServiceClient;
 using AdminPanel.Mvc.Services.AuthService;
+using AdminPanel.Mvc.Services.DictionaryServiceClient;
 using AdminPanel.Mvc.Services.DocumentServiceClient;
 using AdminPanel.Mvc.Services.UserServiceClient;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -50,6 +51,11 @@ services.AddHttpClient<IAdmissionServiceClient, AdmissionServiceClient>(client =
 services.AddHttpClient<IDocumentServiceClient, DocumentServiceClient>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5001");
+});
+
+services.AddHttpClient<IDictionaryServiceClient, DictionaryServiceClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5000");
 });
 
 services.AddDistributedMemoryCache();

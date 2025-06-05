@@ -8,6 +8,7 @@ using Contract.Application.Exceptions;
 using Contract.Domain.Enums;
 using Contract.Dtos.Dtos.Requests;
 using Contract.Dtos.Dtos.Responses;
+using DocumentService.Application.Dtos.Requests;
 
 namespace AdminPanel.Mvc.Services.AdmissionServiceClient;
 
@@ -292,8 +293,6 @@ public class AdmissionServiceClient : IAdmissionServiceClient
             WriteIndented = false
         });
         
-        Console.WriteLine($"dto : {jsonContent}");
-        
         request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         var response = await _httpClient.SendAsync(request);
@@ -330,6 +329,31 @@ public class AdmissionServiceClient : IAdmissionServiceClient
         {
             _logger.LogError("Failed to change program priorities. Status code: {StatusCode}", response.StatusCode);
             return false; 
+        }
+
+        return true;
+    }
+    
+    public async Task<bool> IsMine(Guid applicantId)
+    {
+        var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
+                        .FirstOrDefault()?.Split(" ").Last()
+                    ?? _httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+
+        if (string.IsNullOrEmpty(token))
+        {
+            _logger.LogWarning("JWT token not found in headers or cookies");
+            throw new Exception("unauthorized");
+        }
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/Admin/Applicants/{applicantId}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response = await _httpClient.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError($"API request failed with status code: {response.StatusCode}");
+            return false;
         }
 
         return true;

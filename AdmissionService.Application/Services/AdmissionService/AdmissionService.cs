@@ -299,6 +299,28 @@ public class AdmissionService : IAdmissionService
         await SendEmailToApplicant(studentAdmission.ApplicantId, studentAdmission.Status);
         await SendEmailToManager(managerId);
     }
+
+    public async Task<bool> IsMineApplicantByAdmission(Guid applicantId, bool isGigaWorker, Guid UserId)
+    {
+        if (isGigaWorker)
+        {
+            return true;
+        }
+
+        var currentAdmission = await _studentAdmissionRepository.GetCurrentStudentAdmissionAsync(applicantId);
+
+        if (currentAdmission == null)
+        {
+            throw new NotFoundException("Admission not found or not created yet");
+        }
+
+        if (currentAdmission.ManagerId == UserId)
+        {
+            return true;
+        }
+
+        return false;
+    }
     
     private async Task SendEmailToApplicant(Guid userId, AdmissionStatus newStatus)
     {
