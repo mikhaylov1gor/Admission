@@ -127,9 +127,32 @@
                                         }
                                         else if (!admission.IsManagerExists)
                                         {
-                                            <button class="btn btn-outline-success" data-admission-id="@admission.AdmissionId" data-applicant-id="@admission.ApplicantId" onclick="handleAction(this, 'take'); event.stopPropagation();">
-                                                <i class="bi bi-check-circle"></i> Взять
-                                            </button>
+                                            if (User.IsInRole("SeniorManager") || User.IsInRole("Administrator"))
+                                            {
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-success dropdown-toggle" type="button" id="managerDropdown-@admission.AdmissionId" data-bs-toggle="dropdown" aria-expanded="false" onclick="event.stopPropagation();">
+                                                        <i class="bi bi-person-plus"></i> Назначить
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="managerDropdown-@admission.AdmissionId">
+                                                        @foreach (var manager in Model.Managers)
+                                                        {
+                                                            <li>
+                                                                <form asp-action="AssignManager" asp-controller="Admission" method="post" style="display:inline;">
+                                                                    <input type="hidden" name="admissionId" value="@admission.AdmissionId" />
+                                                                    <input type="hidden" name="managerId" value="@manager.Id" />
+                                                                    <button type="submit" class="dropdown-item" onclick="event.stopPropagation()">@manager.FullName</button>
+                                                                </form>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-outline-success" data-admission-id="@admission.AdmissionId" data-applicant-id="@admission.ApplicantId" onclick="handleAction(this, 'take'); event.stopPropagation();">
+                                                    <i class="bi bi-check-circle"></i> Взять
+                                                </button>
+                                            }
                                         }
                                     </div>
                                 </td>
@@ -205,6 +228,7 @@
 
 @section Scripts {
     <script>
+        
     function handleAction(button, actionType) {
         const admissionId = button.getAttribute("data-admission-id");
         const applicantId = button.getAttribute("data-applicant-id");
@@ -227,5 +251,6 @@
     function goToDetails(admissionId, applicantId) {
         window.location.href = `/Admission/Details/${admissionId}?applicantId=${applicantId}`;
     }
-</script>
+
+    </script>
 }

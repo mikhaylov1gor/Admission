@@ -242,7 +242,6 @@ public class AdmissionService : IAdmissionService
 
         await _studentAdmissionRepository.SaveChangesAsync();
         
-        // sending email
         await SendEmailToApplicant(studentAdmission.ApplicantId, studentAdmission.Status);
         if (studentAdmission.Status == AdmissionStatus.InProgress)
         {
@@ -276,7 +275,31 @@ public class AdmissionService : IAdmissionService
         
         return programs;
     }
+    
+    public async Task AssignManager(Guid admissionId, Guid managerId)
+    {
+        var studentAdmission = await _studentAdmissionRepository.GetStudentAdmissionByIdAsync(admissionId, managerId, true);
 
+        if (studentAdmission == null)
+        {
+            throw new NotFoundException("Admission not found or not created yet");
+        }
+
+        if (studentAdmission.ManagerId != null)
+        {
+            throw new BadRequestException("Admission already assigned");
+        }
+        
+        studentAdmission.ManagerId = managerId;
+        studentAdmission.ModifiedTime = DateTime.UtcNow;
+        studentAdmission.Status = AdmissionStatus.InProgress;
+        
+        await _studentAdmissionRepository.SaveChangesAsync();
+        
+        await SendEmailToApplicant(studentAdmission.ApplicantId, studentAdmission.Status);
+        await SendEmailToManager(managerId);
+    }
+    
     private async Task SendEmailToApplicant(Guid userId, AdmissionStatus newStatus)
     {
         var email = await _userServiceClient.GetUserEmail(userId);

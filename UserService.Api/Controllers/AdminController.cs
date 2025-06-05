@@ -45,9 +45,9 @@ public class AdminController : ControllerBase
 
     [HttpGet("Managers")]
     [Authorize(Roles = "Administrator, SeniorManager")]
-    public async Task<IActionResult> GetManagers()
+    public async Task<IActionResult> GetManagers(bool isAllManagers)
     {
-        var response = await _applicantService.GetAllManagers();
+        var response = await _applicantService.GetAllManagers(isAllManagers);
         return Ok(response);
     }
 
@@ -66,16 +66,4 @@ public class AdminController : ControllerBase
         var response = await _applicantService.GetProfile(applicantId);
         return Ok(response.Value);
     }
-
-    /*[HttpGet("Applicant/{applicantId}/IsMine")]
-    [Authorize(Roles = "Administrator, Manager, SeniorManager")]
-    public async Task<IActionResult> IsMineApplicant(Guid applicantId)
-    {
-        var role = ClaimsPrincipal.Current.FindFirst(ClaimTypes.Role).Value;
-        if (role == "SeniorManager" || role == "Administrator")
-            return Ok(true);
-        
-        var managerId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-        var response = await _applicantService.IsMineApplicant(applicantId, managerId);
-    }*/
 }

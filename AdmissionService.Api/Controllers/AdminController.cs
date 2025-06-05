@@ -87,4 +87,12 @@ public class AdminController : BaseController
         await _programService.EditAdmissionProgramsForManager(admissionId, dto, UserId, isGigaWorker);
         return Ok();
     }
+
+    [HttpPut("Admissions/{admissionId}/AssignManager/{managerId}")]
+    [Authorize(Roles = "Administrator, SeniorManager")]
+    public async Task<IActionResult> AssignManagerToAdmission(Guid admissionId, Guid managerId)
+    {
+        await _admissionService.AssignManager(admissionId, managerId);
+        return Ok();
+    }
 }

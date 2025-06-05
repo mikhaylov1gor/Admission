@@ -11,10 +11,13 @@ namespace AdminPanel.Mvc.Controllers;
 public class ManagerController : Controller
 {
     private readonly IUserServiceClient  _userServiceClient;
+    private readonly IAdmissionServiceClient _admissionServiceClient;
 
-    public ManagerController(IUserServiceClient userServiceClient)
+    public ManagerController(IUserServiceClient userServiceClient,
+        IAdmissionServiceClient admissionServiceClient)
     {
         _userServiceClient = userServiceClient;
+        _admissionServiceClient = admissionServiceClient;
     }
     
     [HttpGet]
@@ -22,7 +25,7 @@ public class ManagerController : Controller
     {
         try
         {
-            var managers = await _userServiceClient.GetAllManagers();
+            var managers = await _userServiceClient.GetAllManagers(true);
             
             var viewModel = new ManagersViewModel
             {
@@ -68,5 +71,4 @@ public class ManagerController : Controller
 
         return RedirectToAction(nameof(Index));
     }
-    
 }

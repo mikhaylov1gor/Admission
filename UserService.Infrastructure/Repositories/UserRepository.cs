@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Contract.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 using UserService.Domain.Entities;
 using UserService.Domain.IRepositories;
 using UserService.Infrastructure.Persistence;
@@ -27,11 +28,19 @@ public class UserRepository : IUserRepository
             .ToListAsync();
     }
 
-    public async Task<List<Manager>> GetAllManagers()
+    public async Task<List<Manager>> GetAllManagers(bool isAllManagers)
     {
-        return await _context.Managers
-            .Include(a => a.User)
-            .ToListAsync();
+        var query = _context.Managers
+            .Include(manager => manager.User)
+            .AsQueryable();
+
+        if (!isAllManagers)
+        {
+            query = query.Where(manager => manager.User != null && 
+                                           manager.User.Role == Role.Manager);
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task<User?> GetByEmailAsync(string email)

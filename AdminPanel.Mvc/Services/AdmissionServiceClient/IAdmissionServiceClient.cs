@@ -18,4 +18,6 @@ public interface IAdmissionServiceClient
     Task <bool> ChangeStatusAsync(Guid admissionId, AdmissionStatus newStatus);
     Task<bool> RemoveProgramFromAdmissionAsync(Guid admissionId, Guid programId);
     Task<bool> ChangePriorities(Guid admissionId, EditProgramsDto dto);
+    
+    Task<bool> AssignManager(Guid admissionId, Guid managerId);
 }

@@ -20,4 +20,6 @@ public interface IAdmissionService
     Task<AdmissionsDto> GetAdmissions(GetAdmissionsDto dto, Guid workerId);
     
     Task TakeUntakeAdmission(Guid admissionId, Guid workerId, Guid userId);
+    
+    Task AssignManager(Guid admissionId, Guid managerId);
 }

@@ -144,9 +144,9 @@ public class ApplicantService : IApplicantService
         return applicantsDto.ToList();
     }
 
-    public async Task<List<ManagerDto>> GetAllManagers()
+    public async Task<List<ManagerDto>> GetAllManagers(bool isAllManagers)
     {
-        var managers = await _userRepository.GetAllManagers();
+        var managers = await _userRepository.GetAllManagers(isAllManagers);
 
         var managersDto = managers
             .Select(m => new ManagerDto

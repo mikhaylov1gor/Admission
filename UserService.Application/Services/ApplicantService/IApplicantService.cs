@@ -15,7 +15,7 @@ public interface IApplicantService
     Task<string> GetEmailByUserId(Guid userId);
     
     Task<List<ApplicantDto>> GetAllApplicants();
-    Task<List<ManagerDto>> GetAllManagers();
+    Task<List<ManagerDto>> GetAllManagers(bool isAllManagers);
     
     Task AssignRoleTo(Guid userId, Role role);
 }

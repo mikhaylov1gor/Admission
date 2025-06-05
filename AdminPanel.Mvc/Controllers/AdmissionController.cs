@@ -1,5 +1,6 @@
 ﻿using AdminPanel.Mvc.Models.Admissions;
 using AdminPanel.Mvc.Services.AdmissionServiceClient;
+using AdminPanel.Mvc.Services.UserServiceClient;
 using AdmissionService.Application.Dtos.Requests;
 using AdmissionService.Application.Dtos.Responses;
 using AdmissionService.Domain.Entities;
@@ -15,10 +16,13 @@ namespace AdminPanel.Mvc.Controllers;
 public class AdmissionController : Controller
 {
     private readonly IAdmissionServiceClient _admissionServiceClient;
+    private readonly IUserServiceClient _userServiceClient;
     
-    public AdmissionController(IAdmissionServiceClient admissionServiceClient)
+    public AdmissionController(IAdmissionServiceClient admissionServiceClient,
+        IUserServiceClient userServiceClient)
     {
         _admissionServiceClient = admissionServiceClient;
+        _userServiceClient = userServiceClient;
 
     }
     
@@ -26,6 +30,7 @@ public class AdmissionController : Controller
     public async Task<IActionResult> Admissions([FromQuery]GetAdmissionsDto filter = null)
     {
         var admissions = await _admissionServiceClient.GetAdmissions(filter);
+        var managers = await _userServiceClient.GetAllManagers(false);
         
         if (admissions == null)
         {
@@ -40,7 +45,8 @@ public class AdmissionController : Controller
         var viewModel = new AdmissionsViewModel
         {
             Admissions = admissions,
-            Filters = filter
+            Filters = filter,
+            Managers = managers
         };
 
         return View(viewModel);
@@ -145,6 +151,27 @@ public class AdmissionController : Controller
             }
 
             return BadRequest("Не удалось изменить приоритеты");
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+    
+    [HttpPost("AssignManager")]
+    [Authorize(Roles = "SeniorManager,Administrator")]
+    public async Task<IActionResult> AssignManager(Guid admissionId, Guid managerId)
+    {
+        try
+        {
+            var result = await _admissionServiceClient.AssignManager(admissionId, managerId);
+            
+            if (result)
+            {
+                TempData["ManagerAssigned"] = true;
+                return RedirectToAction(nameof(Admissions));
+            }
+            return BadRequest("Не удалось назначить менеджера");
         }
         catch (Exception ex)
         {

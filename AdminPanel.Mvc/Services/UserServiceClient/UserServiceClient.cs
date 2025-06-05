@@ -113,7 +113,7 @@ public class UserServiceClient : IUserServiceClient
         }
     }
 
-    public async Task<List<ManagerDto>> GetAllManagers()
+    public async Task<List<ManagerDto>> GetAllManagers(bool isAllManagers)
     {
         try
         {
@@ -127,7 +127,7 @@ public class UserServiceClient : IUserServiceClient
                 return new List<ManagerDto>();
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/Admin/Managers");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/Admin/Managers?isAllManagers={isAllManagers}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.SendAsync(request);

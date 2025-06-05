@@ -10,5 +10,5 @@ public interface IUserRepository
     Task SaveChangesAsync();
     
     Task<List<Applicant>> GetAllApplicants();
-    Task<List<Manager>> GetAllManagers();
+    Task<List<Manager>> GetAllManagers(bool isAllManagers);
 }
