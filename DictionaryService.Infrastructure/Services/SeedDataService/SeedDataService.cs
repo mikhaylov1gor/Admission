@@ -103,9 +103,8 @@ public class SeedDataService : ISeedDataService
     public async Task SeedProgramsAsync()
     {
         if (_context.EducationPrograms.Any()) return;
-
-        var response = await GetExternalData<ExternalProgramsResponse>(
-            "https://1c-mockup.kreosoft.space/api/dictionary/programs");
+        var url = "https://1c-mockup.kreosoft.space/api/dictionary/programs?page=1&size=1000000";
+        var response = await GetExternalData<ExternalProgramsResponse>(url);
 
         foreach (var ext in response.programs)
         {
